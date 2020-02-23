@@ -44,11 +44,14 @@ class AlignSubtitlesToVideoFramesCommand(BaseCommand):
 
         changed = 0
         unchanged = 0
+        last_timecode = self.api.video.current_stream.timecodes[-1]
 
         with self.api.undo.capture():
             for sub in await self.args.target.get_subtitles():
                 new_start = func(sub.start)
                 new_end = func(sub.end)
+                if new_end >= last_timecode:
+                    new_end = last_timecode + 10
 
                 if new_start != sub.start or new_end != sub.end:
                     sub.start = new_start
