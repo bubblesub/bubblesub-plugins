@@ -1,14 +1,23 @@
 import argparse
 import asyncio
+import time
 import typing as T
 from subprocess import PIPE, run
 
 import ass_tag_parser
+
 from bubblesub.api import Api
 from bubblesub.api.cmd import BaseCommand
 from bubblesub.cfg.menu import MenuCommand, SubMenu
 from bubblesub.cmd.common import SubtitlesSelection
 from bubblesub.fmt.ass.event import AssEvent
+
+
+def divide_into_groups(
+    source: T.Sequence[T.Any], size: int
+) -> T.Iterable[T.Sequence[T.Any]]:
+    size = max(1, size)
+    return (source[i : i + size] for i in range(0, len(source), size))
 
 
 def translate(
@@ -42,7 +51,7 @@ def postprocess(chunk: str) -> str:
     )
 
 
-def collect_text_chunks(events: T.List[AssEvent]) -> str:
+def collect_text_chunks(events: T.List[AssEvent]) -> T.Iterable[str]:
     for event in events:
         text = event.note
         try:
@@ -56,7 +65,7 @@ def collect_text_chunks(events: T.List[AssEvent]) -> str:
                     yield item.text
 
 
-def put_text_chunks(events: T.List[AssEvent], chunks: T.List[str]) -> str:
+def put_text_chunks(events: T.List[AssEvent], chunks: T.List[str]) -> None:
     for event in events:
         text = event.note
         try:
@@ -98,21 +107,24 @@ class GoogleTranslateCommand(BaseCommand):
             self.api.log.info("Nothing to translate")
             return
 
-        lines = "\n".join(chunks)
-        try:
-            translated_lines = translate(
-                lines,
-                self.args.engine,
-                self.args.source_code,
-                self.args.target_code,
+        translated_chunks: T.List[str] = []
+        for i, chunks_group in enumerate(divide_into_groups(chunks, 50)):
+            if i != 0:
+                time.sleep(self.args.sleep_time)
+            lines = "\n".join(chunks_group)
+            try:
+                translated_lines = translate(
+                    lines,
+                    self.args.engine,
+                    self.args.source_code,
+                    self.args.target_code,
+                )
+            except ValueError as ex:
+                self.api.log.error(f"error ({ex})")
+                return
+            translated_chunks.extend(
+                map(postprocess, translated_lines.split("\n"))
             )
-        except ValueError as ex:
-            self.api.log.error(f"error ({ex})")
-            return
-
-        translated_chunks = list(
-            map(postprocess, translated_lines.split("\n"))
-        )
 
         if len(translated_chunks) != len(chunks):
             self.api.log.error(f"mismatching number of chunks")
@@ -138,6 +150,13 @@ class GoogleTranslateCommand(BaseCommand):
             help="engine to use",
             choices=["bing", "google", "yandex"],
             default="google",
+        )
+        parser.add_argument(
+            "-s",
+            "--sleep-time",
+            help="time to sleep after each chunk",
+            type=int,
+            default=3,
         )
         parser.add_argument(
             metavar="from", dest="source_code", help="source language code"
