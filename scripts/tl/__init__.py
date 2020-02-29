@@ -92,10 +92,13 @@ class GoogleTranslateCommand(BaseCommand):
         )
 
     def run_in_background(self, subs: T.List[AssEvent]) -> None:
-        chunks = list(collect_text_chunks(subs))
+        chunks = list(map(preprocess, collect_text_chunks(subs)))
 
-        lines = "\n".join(map(preprocess, chunks))
+        if not chunks:
+            self.api.log.info("Nothing to translate")
+            return
 
+        lines = "\n".join(chunks)
         try:
             translated_lines = translate(
                 lines,
