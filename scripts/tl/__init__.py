@@ -111,13 +111,13 @@ class GoogleTranslateCommand(BaseCommand):
 
         i = 0
         translated_chunks: T.List[str] = []
-        for chunks_group in divide_into_groups(chunks, MAX_CHUNKS):
+        chunks_groups = list(divide_into_groups(chunks, MAX_CHUNKS))
+        while chunks_groups:
+            chunks_group = chunks_groups.pop(0)
             self.api.log.info(
                 "translating chunks "
                 f"{i+1}..{i+len(chunks_group)}/{len(chunks)}..."
             )
-            if i != 0:
-                time.sleep(self.args.sleep_time)
             i += len(chunks_group)
 
             lines = "\n".join(chunks_group)
@@ -134,6 +134,9 @@ class GoogleTranslateCommand(BaseCommand):
             translated_chunks.extend(
                 map(postprocess, translated_lines.split("\n"))
             )
+
+            if chunks_groups:
+                time.sleep(self.args.sleep_time)
 
         if len(translated_chunks) != len(chunks):
             self.api.log.error(f"mismatching number of chunks")
