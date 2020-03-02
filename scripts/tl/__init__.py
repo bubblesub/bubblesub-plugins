@@ -12,6 +12,8 @@ from bubblesub.cfg.menu import MenuCommand, SubMenu
 from bubblesub.cmd.common import SubtitlesSelection
 from bubblesub.fmt.ass.event import AssEvent
 
+MAX_CHUNKS = 50
+
 
 def divide_into_groups(
     source: T.Sequence[T.Any], size: int
@@ -107,10 +109,17 @@ class GoogleTranslateCommand(BaseCommand):
             self.api.log.info("Nothing to translate")
             return
 
+        i = 0
         translated_chunks: T.List[str] = []
-        for i, chunks_group in enumerate(divide_into_groups(chunks, 50)):
+        for chunks_group in divide_into_groups(chunks, MAX_CHUNKS):
+            self.api.log.info(
+                "translating chunks "
+                f"{i+1}..{i+len(chunks_group)}/{len(chunks)}..."
+            )
             if i != 0:
                 time.sleep(self.args.sleep_time)
+            i += len(chunks_group)
+
             lines = "\n".join(chunks_group)
             try:
                 translated_lines = translate(
