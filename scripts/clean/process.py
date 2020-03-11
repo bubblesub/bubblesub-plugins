@@ -68,7 +68,24 @@ def fix_useless_ass_tags(text: str) -> str:
 
 
 def fix_whitespace(text: str) -> str:
-    return re.sub(" *\n *", "\n", text.strip(), flags=re.M)
+    try:
+        ass_line = ass_tag_parser.parse_ass(text)
+    except ass_tag_parser.ParseError as ex:
+        # dumb replace
+        return re.sub(" *\n *", "\n", text.strip(), flags=re.M)
+
+    for item in ass_line:
+        if isinstance(item, ass_tag_parser.AssText):
+            item.text = item.text.lstrip()
+            break
+    for item in reversed(ass_line):
+        if isinstance(item, ass_tag_parser.AssText):
+            item.text = item.text.rstrip()
+            break
+    for item in ass_line:
+        if isinstance(item, ass_tag_parser.AssText):
+            item.text = re.sub(" *\n *", "\n", item.text, flags=re.M)
+    return ass_tag_parser.compose_ass(ass_line)
 
 
 def fix_punctuation(text: str) -> str:

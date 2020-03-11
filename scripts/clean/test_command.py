@@ -45,6 +45,9 @@ def test_fix_whitespace() -> None:
     assert fix_whitespace("asd \nasd") == "asd\nasd"
     assert fix_whitespace("asd\n asd") == "asd\nasd"
     assert fix_whitespace("asd  \n  asd  \n  asd\n") == "asd\nasd\nasd"
+    assert fix_whitespace("{x} asd ") == "{x}asd"
+    assert fix_whitespace("{x} asd {x} asd ") == "{x}asd {x} asd"
+    assert fix_whitespace("{x} asd {x} \n {x}asd") == "{x}asd {x}\n{x}asd"
 
 
 def test_fix_useless_ass_tags() -> None:
@@ -62,6 +65,7 @@ def test_fix_useless_ass_tags() -> None:
         fix_useless_ass_tags("asd{\\b900}asd{\\b900}asd")
         == "asd{\\b900}asdasd"
     )
+    assert fix_useless_ass_tags("asd{}asd") == "asdasd"
 
 
 def test_punctuation() -> None:
