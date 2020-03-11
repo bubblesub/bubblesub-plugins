@@ -1,25 +1,11 @@
 import argparse
-import re
 
 from bubblesub.api import Api
 from bubblesub.api.cmd import BaseCommand
 from bubblesub.cfg.menu import MenuCommand
 from bubblesub.cmd.common import SubtitlesSelection
 
-
-def fix_text(text: str) -> str:
-    text = text.replace("\\N", "\n")  # convert newlines
-
-    text = text.replace("}{", "")  # disjoint ASS tags
-    text = re.sub(r"{\\[bius][01]?}$", "", text)  # dangling ASS tags
-    text = re.sub("^- ", "– ", text, flags=re.M)  # bad dalogues dash
-    text = text.strip()  # extra whitespace
-    text = text.replace("\n ", "\n")  # whitespace after line breaks
-    text = text.replace(" \n", "\n")  # whitespace before line breaks
-    text = text.replace("...", "…")  # proper ellipsis
-
-    text = text.replace("\n", "\\N")  # restore newlines
-    return text
+from .process import fix_text
 
 
 class CleanCommand(BaseCommand):
