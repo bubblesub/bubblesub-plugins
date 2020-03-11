@@ -33,10 +33,7 @@ def fix_bad_dialogue_dashes(text: str) -> str:
 
 
 def fix_whitespace(text: str) -> str:
-    text = text.strip()
-    text = text.replace("\n ", "\n")
-    text = text.replace(" \n", "\n")
-    return text
+    return re.sub(" *\n *", "\n", text.strip(), flags=re.M)
 
 
 def fix_punctuation(text: str) -> str:

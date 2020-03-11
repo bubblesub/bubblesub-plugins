@@ -43,6 +43,7 @@ def test_fix_whitespace() -> None:
     assert fix_whitespace(" asd ") == "asd"
     assert fix_whitespace("asd \nasd") == "asd\nasd"
     assert fix_whitespace("asd\n asd") == "asd\nasd"
+    assert fix_whitespace("asd  \n  asd  \n  asd\n") == "asd\nasd\nasd"
 
 
 def test_punctuation() -> None:
