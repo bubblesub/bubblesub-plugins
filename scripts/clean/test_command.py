@@ -25,6 +25,18 @@ def test_fix_bad_dialogue_dashes() -> None:
         fix_bad_dialogue_dashes("- asd\n- asd")
         == "\N{EN DASH} asd\n\N{EN DASH} asd"
     )
+    assert (
+        fix_bad_dialogue_dashes("{\\nonsense- asd\n- asd")
+        == "{\\nonsense- asd\n\N{EN DASH} asd"
+    )
+    assert (
+        fix_bad_dialogue_dashes("{\\i1}- asd\n- asd")
+        == "{\\i1}\N{EN DASH} asd\n\N{EN DASH} asd"
+    )
+    assert (
+        fix_bad_dialogue_dashes("- asd\n{\\i1}- asd")
+        == "\N{EN DASH} asd\n{\\i1}\N{EN DASH} asd"
+    )
 
 
 def test_fix_whitespace() -> None:

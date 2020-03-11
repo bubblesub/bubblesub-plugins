@@ -1,5 +1,7 @@
 import re
 
+import ass_tag_parser
+
 
 def fix_disjoint_ass_tags(text: str) -> str:
     return text.replace("}{", "")
@@ -10,7 +12,24 @@ def fix_dangling_ass_tags(text: str) -> str:
 
 
 def fix_bad_dialogue_dashes(text: str) -> str:
-    return re.sub("^- ", "\N{EN DASH} ", text, flags=re.M)
+    try:
+        ass_line = ass_tag_parser.parse_ass(text)
+    except ass_tag_parser.ParseError as ex:
+        # dumb replace
+        return re.sub("^- ", "\N{EN DASH} ", text, flags=re.M)
+    else:
+        plain_text_so_far = ""
+        ret = ""
+        for item in ass_line:
+            chunk = item.meta.text
+            if isinstance(item, ass_tag_parser.AssText):
+                if chunk.startswith("- ") and (
+                    plain_text_so_far.endswith("\n") or not plain_text_so_far
+                ):
+                    chunk = re.sub("^- ", "\N{EN DASH} ", chunk, flags=re.M)
+                plain_text_so_far += chunk
+            ret += chunk
+        return ret
 
 
 def fix_whitespace(text: str) -> str:
