@@ -8,6 +8,7 @@ from .process import (
     fix_dangling_ass_tags,
     fix_disjoint_ass_tags,
     fix_punctuation,
+    fix_useless_ass_tags,
     fix_whitespace,
 )
 
@@ -44,6 +45,23 @@ def test_fix_whitespace() -> None:
     assert fix_whitespace("asd \nasd") == "asd\nasd"
     assert fix_whitespace("asd\n asd") == "asd\nasd"
     assert fix_whitespace("asd  \n  asd  \n  asd\n") == "asd\nasd\nasd"
+
+
+def test_fix_useless_ass_tags() -> None:
+    assert fix_useless_ass_tags("{\\i0}asd") == "{\\i0}asd"
+    assert fix_useless_ass_tags("{\\i1}asd") == "{\\i1}asd"
+    assert fix_useless_ass_tags("asd{\\i1}asd{\\i1}asd") == "asd{\\i1}asdasd"
+    assert fix_useless_ass_tags("{\\b0}asd") == "{\\b0}asd"
+    assert fix_useless_ass_tags("{\\b1}asd") == "{\\b1}asd"
+    assert fix_useless_ass_tags("asd{\\b1}asd{\\b1}asd") == "asd{\\b1}asdasd"
+    assert (
+        fix_useless_ass_tags("asd{\\b1}asd{\\b900}asd")
+        == "asd{\\b1}asd{\\b900}asd"
+    )
+    assert (
+        fix_useless_ass_tags("asd{\\b900}asd{\\b900}asd")
+        == "asd{\\b900}asdasd"
+    )
 
 
 def test_punctuation() -> None:

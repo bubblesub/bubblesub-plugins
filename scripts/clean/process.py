@@ -1,4 +1,5 @@
 import re
+import typing as T
 
 import ass_tag_parser
 
@@ -32,6 +33,40 @@ def fix_bad_dialogue_dashes(text: str) -> str:
         return ret
 
 
+def fix_useless_ass_tags(text: str) -> str:
+    try:
+        ass_line = ass_tag_parser.parse_ass(text)
+    except ass_tag_parser.ParseError as ex:
+        return text
+
+    def remove_useless_italics(
+        ass_line: T.Iterable[ass_tag_parser.AssItem],
+    ) -> T.Iterable[ass_tag_parser.AssItem]:
+        last_state = None
+        for item in ass_line:
+            if isinstance(item, ass_tag_parser.AssTagItalic):
+                if last_state == item.enabled:
+                    continue
+                last_state = item.enabled
+            yield item
+
+    def remove_useless_bold(
+        ass_line: T.Iterable[ass_tag_parser.AssItem],
+    ) -> T.Iterable[ass_tag_parser.AssItem]:
+        last_state = None, None
+        for item in ass_line:
+            if isinstance(item, ass_tag_parser.AssTagBold):
+                if last_state == (item.enabled, item.weight):
+                    continue
+                last_state = item.enabled, item.weight
+            yield item
+
+    ass_line = remove_useless_italics(ass_line)
+    ass_line = remove_useless_bold(ass_line)
+
+    return ass_tag_parser.compose_ass(ass_line)
+
+
 def fix_whitespace(text: str) -> str:
     return re.sub(" *\n *", "\n", text.strip(), flags=re.M)
 
@@ -46,6 +81,7 @@ def fix_text(text: str) -> str:
 
     text = fix_disjoint_ass_tags(text)
     text = fix_dangling_ass_tags(text)
+    text = fix_useless_ass_tags(text)
     text = fix_bad_dialogue_dashes(text)
     text = fix_whitespace(text)
     text = fix_punctuation(text)
