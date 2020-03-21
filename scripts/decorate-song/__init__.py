@@ -11,7 +11,7 @@ END = "  {\\fnArial}\N{EIGHTH NOTE}{\\fn}"
 
 class DecorateSongCommand(BaseCommand):
     names = ["decorate-song"]
-    help_text = "Add notes at the beginning and ending of each line."
+    help_text = "Adds musical notes at the beginning and end of each line."
 
     @property
     def is_enabled(self):

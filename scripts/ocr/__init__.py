@@ -269,7 +269,7 @@ class _Dialog(Dialog):
 
 class OCRCommand(BaseCommand):
     names = ["ocr"]
-    help_text = "Perform optical recognition on given frame."
+    help_text = "Performs optical recognition on a given video frame."
 
     @property
     def is_enabled(self):

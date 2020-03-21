@@ -10,7 +10,7 @@ from .process import fix_text
 
 class CleanCommand(BaseCommand):
     names = ["clean"]
-    help_text = "Clean subtitles from random garbage."
+    help_text = "Cleans subtitles from random garbage."
 
     @property
     def is_enabled(self):

@@ -9,6 +9,7 @@ from ass_tag_parser import (
     ParseError,
     parse_ass,
 )
+
 from bubblesub.fmt.ass.event import AssEvent
 
 from .common import BaseResult, Violation

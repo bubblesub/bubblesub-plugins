@@ -1,5 +1,6 @@
-import regex
 import typing as T
+
+import regex
 
 from bubblesub.fmt.ass.event import AssEvent
 from bubblesub.fmt.ass.util import ass_to_plaintext

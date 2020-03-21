@@ -2,6 +2,7 @@ import functools
 import re
 
 import ass_tag_parser
+
 from bubblesub.api.cmd import BaseCommand
 from bubblesub.cfg.menu import MenuCommand
 from bubblesub.fmt.ass.util import ass_to_plaintext
@@ -22,7 +23,11 @@ def extract_text(text: str) -> str:
 
 class ProgressCommand(BaseCommand):
     names = ["progress"]
-    help_text = "How much left"
+    help_text = "Shows basic statistics about subtitles translation progress."
+    help_text_extra = (
+        "Expects that the subtitles are already timed "
+        "and untranslated lines are empty."
+    )
 
     async def run(self):
         empty_count = 0

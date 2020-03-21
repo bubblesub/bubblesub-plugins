@@ -15,7 +15,7 @@ def smart_float(value: T.Union[int, float, None]) -> str:
 
 class DecorateSongCommand(BaseCommand):
     names = ["blur"]
-    help_text = "Blur selected subtitles."
+    help_text = "Blurs selected subtitles."
 
     @property
     def is_enabled(self):

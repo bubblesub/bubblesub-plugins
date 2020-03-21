@@ -32,7 +32,7 @@ def is_white(frame: np.array) -> bool:
 
 class DetectKaraokeCommand(BaseCommand):
     names = ["detect-karaoke"]
-    help_text = "Detect static karaoke within selected video frames."
+    help_text = "Detects static karaoke within selected video frames."
 
     @property
     def is_enabled(self):

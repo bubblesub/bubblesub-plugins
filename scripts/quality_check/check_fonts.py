@@ -3,6 +3,7 @@ from collections import defaultdict
 from pathlib import Path
 
 import ass_tag_parser
+
 from bubblesub.api import Api
 
 try:
@@ -42,7 +43,7 @@ class FontInfo:
 
 
 def get_used_font_styles(
-    api: Api
+    api: Api,
 ) -> T.Dict[T.Tuple[str, bool, bool], T.Set[str]]:
     results = defaultdict(set)
 
