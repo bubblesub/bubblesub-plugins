@@ -89,7 +89,11 @@ def fix_whitespace(text: str) -> str:
 
 
 def fix_punctuation(text: str) -> str:
-    return text.replace("...", "\N{HORIZONTAL ELLIPSIS}")
+    text = text.replace("...", "\N{HORIZONTAL ELLIPSIS}")
+    text = re.sub(
+        "\N{HORIZONTAL ELLIPSIS}\\.+", "\N{HORIZONTAL ELLIPSIS}", text
+    )
+    return text
 
 
 def fix_text(text: str) -> str:

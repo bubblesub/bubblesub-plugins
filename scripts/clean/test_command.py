@@ -70,3 +70,8 @@ def test_fix_useless_ass_tags() -> None:
 
 def test_punctuation() -> None:
     assert fix_punctuation("asd...") == "asd\N{HORIZONTAL ELLIPSIS}"
+    assert fix_punctuation("asd....") == "asd\N{HORIZONTAL ELLIPSIS}"
+    assert (
+        fix_punctuation("asd\N{HORIZONTAL ELLIPSIS}.")
+        == "asd\N{HORIZONTAL ELLIPSIS}"
+    )
