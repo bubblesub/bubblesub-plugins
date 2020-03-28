@@ -2,6 +2,7 @@ import re
 import typing as T
 
 import ass_tag_parser
+from bubblesub.fmt.ass.style import AssStyle
 
 
 def fix_disjoint_ass_tags(text: str) -> str:
@@ -33,7 +34,7 @@ def fix_bad_dialogue_dashes(text: str) -> str:
         return ret
 
 
-def fix_useless_ass_tags(text: str) -> str:
+def fix_useless_ass_tags(text: str, style: T.Optional[AssStyle] = None) -> str:
     try:
         ass_line = ass_tag_parser.parse_ass(text)
     except ass_tag_parser.ParseError as ex:
@@ -42,7 +43,7 @@ def fix_useless_ass_tags(text: str) -> str:
     def remove_useless_italics(
         ass_line: T.Iterable[ass_tag_parser.AssItem],
     ) -> T.Iterable[ass_tag_parser.AssItem]:
-        last_state = None
+        last_state = style.italic if style else None
         for item in ass_line:
             if isinstance(item, ass_tag_parser.AssTagItalic):
                 if last_state == item.enabled:
@@ -53,7 +54,7 @@ def fix_useless_ass_tags(text: str) -> str:
     def remove_useless_bold(
         ass_line: T.Iterable[ass_tag_parser.AssItem],
     ) -> T.Iterable[ass_tag_parser.AssItem]:
-        last_state = None, None
+        last_state = (style.bold if style else None), None
         for item in ass_line:
             if isinstance(item, ass_tag_parser.AssTagBold):
                 if last_state == (item.enabled, item.weight):
@@ -96,13 +97,13 @@ def fix_punctuation(text: str) -> str:
     return text
 
 
-def fix_text(text: str) -> str:
+def fix_text(text: str, style: T.Optional[AssStyle] = None) -> str:
     text = text.replace("\\N", "\n")
     text = text.replace("\\n", "\n")
 
     text = fix_disjoint_ass_tags(text)
     text = fix_dangling_ass_tags(text)
-    text = fix_useless_ass_tags(text)
+    text = fix_useless_ass_tags(text, style)
     text = fix_bad_dialogue_dashes(text)
     text = fix_whitespace(text)
     text = fix_punctuation(text)

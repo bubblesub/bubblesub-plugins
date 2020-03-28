@@ -30,7 +30,8 @@ class CleanCommand(BaseCommand):
         changed = 0
         with self.api.undo.capture():
             for sub in await self.args.target.get_subtitles():
-                text = fix_text(sub.text)
+                style = self.api.subs.styles.get_by_name(sub.style)
+                text = fix_text(sub.text, style)
                 if text != sub.text:
                     sub.text = text
                     changed += 1
