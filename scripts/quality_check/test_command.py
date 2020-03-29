@@ -212,33 +212,134 @@ def test_check_punctuation(text: str, violation_text: T.Optional[str]) -> None:
 
 
 @pytest.mark.parametrize(
-    "text, violation_text_re, log_level",
+    "text, expected_violations",
     [
-        ('"What…', "partial quote", LogLevel.Info),
-        ('…what."', "partial quote", LogLevel.Info),
-        ('"What."', ".*inside.*marks", LogLevel.Debug),
-        ('"What".', ".*outside.*", LogLevel.Debug),
-        ('"What", he said.', ".*outside.*", LogLevel.Debug),
-        ('"What." he said.', ".*inside.*", LogLevel.Debug),
-        ('"What!" he said.', ".*inside.*", LogLevel.Debug),
-        ('"What?" he said.', ".*inside.*", LogLevel.Debug),
-        ('"What…" he said.', ".*inside.*", LogLevel.Debug),
-        ('"What," he said.', ".*inside.*", LogLevel.Warning),
-        ('He said "what."', ".*inside.*", LogLevel.Warning),
-        ('He said "what!"', ".*inside.*", LogLevel.Warning),
-        ('He said "what?"', ".*inside.*", LogLevel.Warning),
-        ('He said "what…"', ".*inside.*", LogLevel.Warning),
+        ("„What…", [("partial quote", LogLevel.Info)]),
+        ("…what.”", [("partial quote", LogLevel.Info)]),
+        ("„What.”", [(".*inside.*marks", LogLevel.Debug)]),
+        ("„What”.", [(".*outside.*", LogLevel.Debug)]),
+        ("„What”, he said.", [(".*outside.*", LogLevel.Debug)]),
+        ("„What.” he said.", [(".*inside.*", LogLevel.Debug)]),
+        ("„What!” he said.", [(".*inside.*", LogLevel.Debug)]),
+        ("„What?” he said.", [(".*inside.*", LogLevel.Debug)]),
+        ("„What…” he said.", [(".*inside.*", LogLevel.Debug)]),
+        ("„What,” he said.", [(".*inside.*", LogLevel.Warning)]),
+        ("He said „what.”", [(".*inside.*", LogLevel.Warning)]),
+        ("He said „what!”", [(".*inside.*", LogLevel.Warning)]),
+        ("He said „what?”", [(".*inside.*", LogLevel.Warning)]),
+        ("He said „what…”", [(".*inside.*", LogLevel.Warning)]),
+        ('"What"', [("plain quotation mark", LogLevel.Info)]),
+        (
+            '"What…',
+            [
+                ("plain quotation mark", LogLevel.Info),
+                ("partial quote", LogLevel.Info),
+            ],
+        ),
+        (
+            '…what."',
+            [
+                ("plain quotation mark", LogLevel.Info),
+                ("partial quote", LogLevel.Info),
+            ],
+        ),
+        (
+            '"What."',
+            [
+                ("plain quotation mark", LogLevel.Info),
+                (".*inside.*marks", LogLevel.Debug),
+            ],
+        ),
+        (
+            '"What".',
+            [
+                ("plain quotation mark", LogLevel.Info),
+                (".*outside.*", LogLevel.Debug),
+            ],
+        ),
+        (
+            '"What", he said.',
+            [
+                ("plain quotation mark", LogLevel.Info),
+                (".*outside.*", LogLevel.Debug),
+            ],
+        ),
+        (
+            '"What." he said.',
+            [
+                ("plain quotation mark", LogLevel.Info),
+                (".*inside.*", LogLevel.Debug),
+            ],
+        ),
+        (
+            '"What!" he said.',
+            [
+                ("plain quotation mark", LogLevel.Info),
+                (".*inside.*", LogLevel.Debug),
+            ],
+        ),
+        (
+            '"What?" he said.',
+            [
+                ("plain quotation mark", LogLevel.Info),
+                (".*inside.*", LogLevel.Debug),
+            ],
+        ),
+        (
+            '"What…" he said.',
+            [
+                ("plain quotation mark", LogLevel.Info),
+                (".*inside.*", LogLevel.Debug),
+            ],
+        ),
+        (
+            '"What," he said.',
+            [
+                ("plain quotation mark", LogLevel.Info),
+                (".*inside.*", LogLevel.Warning),
+            ],
+        ),
+        (
+            'He said "what."',
+            [
+                ("plain quotation mark", LogLevel.Info),
+                (".*inside.*", LogLevel.Warning),
+            ],
+        ),
+        (
+            'He said "what!"',
+            [
+                ("plain quotation mark", LogLevel.Info),
+                (".*inside.*", LogLevel.Warning),
+            ],
+        ),
+        (
+            'He said "what?"',
+            [
+                ("plain quotation mark", LogLevel.Info),
+                (".*inside.*", LogLevel.Warning),
+            ],
+        ),
+        (
+            'He said "what…"',
+            [
+                ("plain quotation mark", LogLevel.Info),
+                (".*inside.*", LogLevel.Warning),
+            ],
+        ),
     ],
 )
 def test_check_quotes(
-    text: str, violation_text_re: str, log_level: LogLevel
+    text: str, expected_violations: T.List[T.Tuple[str, LogLevel]]
 ) -> None:
     event_list = AssEventList()
     event_list.append(AssEvent(text=text))
     results = list(check_quotes(event_list[0]))
-    assert len(results) == 1
-    assert re.match(violation_text_re, results[0].text)
-    assert results[0].log_level == log_level
+    assert len(results) == len(expected_violations)
+    for expected_violation, result in zip(expected_violations, results):
+        violation_text_re, log_level = expected_violation
+        assert re.match(violation_text_re, result.text)
+        assert result.log_level == log_level
 
 
 @pytest.mark.parametrize(
