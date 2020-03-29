@@ -3,7 +3,11 @@ import typing as T
 
 import pytest
 
+from bubblesub.fmt.ass.event import AssEvent
+
 from .process import (
+    ProcessingError,
+    convert_to_smart_quotes,
     fix_bad_dialogue_dashes,
     fix_dangling_ass_tags,
     fix_disjoint_ass_tags,
@@ -68,10 +72,31 @@ def test_fix_useless_ass_tags() -> None:
     assert fix_useless_ass_tags("asd{}asd") == "asdasd"
 
 
-def test_punctuation() -> None:
+def test_fix_punctuation() -> None:
     assert fix_punctuation("asd...") == "asd\N{HORIZONTAL ELLIPSIS}"
     assert fix_punctuation("asd....") == "asd\N{HORIZONTAL ELLIPSIS}"
     assert (
         fix_punctuation("asd\N{HORIZONTAL ELLIPSIS}.")
         == "asd\N{HORIZONTAL ELLIPSIS}"
     )
+
+
+def test_convert_to_smart_quotes() -> None:
+    events = [
+        AssEvent(text='"Infix". "Prefix…'),
+        AssEvent(text="ignore"),
+        AssEvent(text='…suffix"'),
+    ]
+
+    convert_to_smart_quotes(events, "„", "”")
+
+    assert events[0].text == "„Infix”. „Prefix…"
+    assert events[1].text == "ignore"
+    assert events[2].text == "…suffix”"
+
+    with pytest.raises(
+        ProcessingError, match="uneven double quotation mark count"
+    ):
+        convert_to_smart_quotes(
+            [AssEvent(text='"uneven quotation mark count')], "„", "”"
+        )

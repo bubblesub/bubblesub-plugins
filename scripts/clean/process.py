@@ -2,7 +2,13 @@ import re
 import typing as T
 
 import ass_tag_parser
+
+from bubblesub.fmt.ass.event import AssEvent
 from bubblesub.fmt.ass.style import AssStyle
+
+
+class ProcessingError(Exception):
+    pass
 
 
 def fix_disjoint_ass_tags(text: str) -> str:
@@ -110,3 +116,27 @@ def fix_text(text: str, style: T.Optional[AssStyle] = None) -> str:
 
     text = text.replace("\n", "\\N")
     return text
+
+
+def convert_to_smart_quotes(
+    events: T.List[AssEvent], opening_mark: str, closing_mark: str
+) -> int:
+    count = 0
+    for event in events:
+        count += len(re.findall('["„“”]', event.text))
+    if count % 2 != 0:
+        raise ProcessingError("uneven double quotation mark count")
+
+    count = 0
+    opening = False
+    for event in events:
+        text = event.text
+        matches = re.finditer('[„”“"]', text)
+        for match in matches:
+            new_quote = opening_mark if opening == 0 else closing_mark
+            opening = not opening
+            text = text[: match.start()] + new_quote + text[match.end() :]
+        if event.text != text:
+            event.text = text
+            count += 1
+    return count
