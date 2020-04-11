@@ -57,7 +57,7 @@ class SaveVideoSampleCommand(BaseCommand):
                     str(self.api.video.current_stream.path),
                     "-y",
                     "-crf",
-                    "20",
+                    str(self.args.crf),
                     "-b:v",
                     "0",
                     "-ss",
@@ -104,6 +104,12 @@ class SaveVideoSampleCommand(BaseCommand):
             "--include-subs",
             help='whether to "burn" subtitles into the video stream',
             action="store_true",
+        )
+        parser.add_argument(
+            "--crf",
+            help="constant rate factor parameter for ffmpeg (default: 20)",
+            type=int,
+            default=20,
         )
 
 
