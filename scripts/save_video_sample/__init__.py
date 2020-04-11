@@ -1,11 +1,14 @@
 import argparse
 import asyncio
 import subprocess
+import tempfile
+from pathlib import Path
 
 from bubblesub.api import Api
 from bubblesub.api.cmd import BaseCommand, CommandUnavailable
 from bubblesub.cfg.menu import MenuCommand
 from bubblesub.cmd.common import FancyPath, Pts
+from bubblesub.fmt.ass.writer import write_ass
 from bubblesub.util import ms_to_str
 
 
@@ -42,12 +45,16 @@ class SaveVideoSampleCommand(BaseCommand):
             ),
         )
 
-        def create_sample():
-            subprocess.run(
-                [
+        def create_sample() -> None:
+            with tempfile.TemporaryDirectory() as dir_name:
+                subs_path = Path(dir_name) / "tmp.ass"
+                with open(subs_path, "w") as handle:
+                    write_ass(self.api.subs.ass_file, handle)
+
+                command = [
                     "ffmpeg",
                     "-i",
-                    self.api.video.current_stream.path,
+                    str(self.api.video.current_stream.path),
                     "-y",
                     "-crf",
                     "20",
@@ -55,9 +62,14 @@ class SaveVideoSampleCommand(BaseCommand):
                     ms_to_str(start),
                     "-to",
                     ms_to_str(end),
-                    str(path),
                 ]
-            )
+
+                if self.args.include_subs:
+                    command += ["-vf", "ass=" + str(subs_path)]
+
+                command += [str(path)]
+
+                subprocess.run(command)
 
         # don't clog the UI thread
         self.api.log.info(f"saving video sample to {path}...")
@@ -84,6 +96,12 @@ class SaveVideoSampleCommand(BaseCommand):
             help="path to save the sample to",
             type=lambda value: FancyPath(api, value),
             default="",
+        )
+        parser.add_argument(
+            "-i",
+            "--include-subs",
+            help='whether to "burn" subtitles into the video stream',
+            action="store_true",
         )
 
 
