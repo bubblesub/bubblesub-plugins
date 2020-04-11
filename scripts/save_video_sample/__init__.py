@@ -58,6 +58,8 @@ class SaveVideoSampleCommand(BaseCommand):
                     "-y",
                     "-crf",
                     "20",
+                    "-b:v",
+                    "0",
                     "-ss",
                     ms_to_str(start),
                     "-to",
