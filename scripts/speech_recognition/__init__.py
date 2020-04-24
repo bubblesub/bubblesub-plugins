@@ -2,6 +2,7 @@ import argparse
 import asyncio
 import concurrent.futures
 import io
+import time
 import typing as T
 
 from bubblesub.api import Api
@@ -17,6 +18,13 @@ except ImportError as ex:
 
 LEAD_IN = 100
 LEAD_OUT = 100
+
+
+def divide_into_groups(
+    source: T.Sequence[T.Any], size: int
+) -> T.Iterable[T.Sequence[T.Any]]:
+    size = max(1, size)
+    return (source[i : i + size] for i in range(0, len(source), size))
 
 
 class SpeechRecognitionCommand(BaseCommand):
@@ -42,46 +50,64 @@ class SpeechRecognitionCommand(BaseCommand):
         )
 
     def run_in_background(self, subtitles: T.List[AssEvent]) -> None:
-        with concurrent.futures.ThreadPoolExecutor(max_workers=5) as executor:
-            if self.args.audio:
-                future = executor.submit(self.recognize_audio_selection)
-                future_to_sub = {future: subtitle for subtitle in subtitles}
+        if self.args.audio:
+            try:
+                note = self.recognize_audio_selection()
+            except sr.UnknownValueError:
+                self.api.log.warn(f"not recognized")
+            except sr.RequestError as ex:
+                self.api.log.error(f"error ({ex})")
             else:
-                future_to_sub = {
-                    executor.submit(
-                        self.recognize_subtitle, subtitle
-                    ): subtitle
-                    for subtitle in subtitles
-                }
-
-            completed, non_completed = concurrent.futures.wait(
-                future_to_sub, timeout=8
-            )
-
-            with self.api.undo.capture():
-                for future, subtitle in future_to_sub.items():
-                    if future not in completed:
-                        continue
-                    try:
-                        note = future.result()
-                    except sr.UnknownValueError:
-                        self.api.log.warn(
-                            f"line #{subtitle.number}: not recognized"
-                        )
-                    except sr.RequestError as ex:
-                        self.api.log.error(
-                            f"line #{subtitle.number}: error ({ex})"
-                        )
-                    else:
-                        self.api.log.info(f"line #{subtitle.number}: OK")
+                self.api.log.info("OK")
+                with self.api.undo.capture():
+                    for subtitle in subtitles:
                         if subtitle.note:
                             subtitle.note += r"\N" + note
                         else:
                             subtitle.note = note
+            return
 
-            for future, subtitle in future_to_sub.items():
-                if future in non_completed:
-                    self.api.log.info(f"line #{subtitle.number}: timeout")
+        for subtitle_group in divide_into_groups(
+            subtitles, self.args.max_workers
+        ):
+            with concurrent.futures.ThreadPoolExecutor(
+                max_workers=self.args.max_workers
+            ) as executor:
+                future_to_sub = {
+                    executor.submit(
+                        self.recognize_subtitle, subtitle
+                    ): subtitle
+                    for subtitle in subtitle_group
+                }
+
+                completed, non_completed = concurrent.futures.wait(
+                    future_to_sub, timeout=8
+                )
+
+                with self.api.undo.capture():
+                    for future, subtitle in future_to_sub.items():
+                        if future not in completed:
+                            continue
+                        try:
+                            note = future.result()
+                        except sr.UnknownValueError:
+                            self.api.log.warn(
+                                f"line #{subtitle.number}: not recognized"
+                            )
+                        except sr.RequestError as ex:
+                            self.api.log.error(
+                                f"line #{subtitle.number}: error ({ex})"
+                            )
+                        else:
+                            self.api.log.info(f"line #{subtitle.number}: OK")
+                            if subtitle.note:
+                                subtitle.note += r"\N" + note
+                            else:
+                                subtitle.note = note
+
+                for future, subtitle in future_to_sub.items():
+                    if future in non_completed:
+                        self.api.log.info(f"line #{subtitle.number}: timeout")
 
     def recognize_subtitle(self, subtitle: AssEvent) -> str:
         self.api.log.info(f"line #{subtitle.number} - analyzing")
@@ -102,6 +128,7 @@ class SpeechRecognitionCommand(BaseCommand):
             handle.seek(0, io.SEEK_SET)
             with sr.AudioFile(handle) as source:
                 audio = recognizer.record(source)
+            time.sleep(self.args.sleep_time)
             return recognizer.recognize_google(audio, language=self.args.code)
 
     @staticmethod
@@ -112,6 +139,20 @@ class SpeechRecognitionCommand(BaseCommand):
             help="subtitles to process",
             type=lambda value: SubtitlesSelection(api, value),
             default="selected",
+        )
+        parser.add_argument(
+            "-m",
+            "--max-workers",
+            help="number of parallel requests",
+            type=int,
+            default=5,
+        )
+        parser.add_argument(
+            "-s",
+            "--sleep-time",
+            help="time to sleep after each chunk",
+            type=int,
+            default=0,
         )
         parser.add_argument(
             "-a",
