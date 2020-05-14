@@ -33,13 +33,19 @@ class WordList:
 
 class SpellCheckerProxy(BaseSpellChecker):
     def __init__(
-        self, spell_checker: BaseSpellChecker, whitelist: WordList
+        self,
+        spell_checker: BaseSpellChecker,
+        whitelist: WordList,
+        blacklist: WordList,
     ) -> None:
         self.spell_checker = spell_checker
         self.whitelist = whitelist
+        self.blacklist = blacklist
 
     def check(self, word: str) -> bool:
-        return self.spell_checker.check(word) or word in self.whitelist
+        return word not in self.blacklist and (
+            self.spell_checker.check(word) or word in self.whitelist
+        )
 
     def add(self, word: str) -> None:
         raise NotImplementedError("not implemented")
@@ -60,6 +66,7 @@ def check_spelling(spell_check_lang: T.Optional[str], api: Api) -> None:
         return
 
     whitelist = WordList()
+    blacklist = WordList()
     spell_check_lang_short = re.sub("[-_].*", "", spell_check_lang)
 
     dict_names = [
@@ -73,12 +80,17 @@ def check_spelling(spell_check_lang: T.Optional[str], api: Api) -> None:
         dict_path = api.subs.path.with_name(dict_name)
         if dict_path.exists():
             for line in dict_path.read_text().splitlines():
-                whitelist.add_word(line)
+                if line.startswith("!"):
+                    blacklist.add_word(line[1:])
+                else:
+                    whitelist.add_word(line)
             break
 
     try:
         base_spell_checker = create_spell_checker(spell_check_lang)
-        custom_spell_checker = SpellCheckerProxy(base_spell_checker, whitelist)
+        custom_spell_checker = SpellCheckerProxy(
+            base_spell_checker, whitelist, blacklist
+        )
     except SpellCheckerError as ex:
         api.log.error(str(ex))
         return
