@@ -13,6 +13,24 @@ from bubblesub.spell_check import (
 from .common import is_event_karaoke
 
 
+class WordList:
+    def __init__(self) -> None:
+        self.case_insensitive: T.List[str] = []
+        self.case_sensitive: T.List[str] = []
+
+    def add_word(self, word: str) -> None:
+        if word.islower():
+            self.case_insensitive.append(word.lower())
+        else:
+            self.case_sensitive.append(word)
+
+    def __contains__(self, word: str) -> None:
+        return (
+            word in self.case_sensitive
+            or word.lower() in self.case_insensitive
+        )
+
+
 def check_spelling(spell_check_lang: T.Optional[str], api: Api) -> None:
     if not api.subs.path:
         return
@@ -27,8 +45,7 @@ def check_spelling(spell_check_lang: T.Optional[str], api: Api) -> None:
         api.log.error(str(ex))
         return
 
-    exceptions_case_sensitive: T.List[str] = []
-    exceptions_case_insensitive: T.List[str] = []
+    whitelist = WordList()
     spell_check_lang_short = re.sub("[-_].*", "", spell_check_lang)
 
     dict_names = [
@@ -42,10 +59,7 @@ def check_spelling(spell_check_lang: T.Optional[str], api: Api) -> None:
         dict_path = api.subs.path.with_name(dict_name)
         if dict_path.exists():
             for line in dict_path.read_text().splitlines():
-                if line.islower():
-                    exceptions_case_insensitive.append(line.lower())
-                else:
-                    exceptions_case_sensitive.append(line)
+                whitelist.add_word(line)
             break
 
     misspelling_map = defaultdict(set)
@@ -54,10 +68,7 @@ def check_spelling(spell_check_lang: T.Optional[str], api: Api) -> None:
             continue
         text = ass_to_plaintext(event.text)
         for _start, _end, word in spell_check_ass_line(dictionary, text):
-            if (
-                word not in exceptions_case_sensitive
-                and word.lower() not in exceptions_case_insensitive
-            ):
+            if word not in whitelist:
                 misspelling_map[word].add(event.number)
 
     if misspelling_map:
