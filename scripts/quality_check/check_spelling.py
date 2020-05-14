@@ -31,18 +31,32 @@ class WordList:
         )
 
 
+class SpellCheckerProxy(BaseSpellChecker):
+    def __init__(
+        self, spell_checker: BaseSpellChecker, whitelist: WordList
+    ) -> None:
+        self.spell_checker = spell_checker
+        self.whitelist = whitelist
+
+    def check(self, word: str) -> bool:
+        return self.spell_checker.check(word) or word in self.whitelist
+
+    def add(self, word: str) -> None:
+        raise NotImplementedError("not implemented")
+
+    def add_to_session(self, word: str) -> None:
+        raise NotImplementedError("not implemented")
+
+    def suggest(self, word: str) -> T.Iterable[str]:
+        raise NotImplementedError("not implemented")
+
+
 def check_spelling(spell_check_lang: T.Optional[str], api: Api) -> None:
     if not api.subs.path:
         return
 
     if not spell_check_lang:
         api.log.warn("Spell check was disabled in config.")
-        return
-
-    try:
-        dictionary = create_spell_checker(spell_check_lang)
-    except SpellCheckerError as ex:
-        api.log.error(str(ex))
         return
 
     whitelist = WordList()
@@ -62,14 +76,22 @@ def check_spelling(spell_check_lang: T.Optional[str], api: Api) -> None:
                 whitelist.add_word(line)
             break
 
+    try:
+        base_spell_checker = create_spell_checker(spell_check_lang)
+        custom_spell_checker = SpellCheckerProxy(base_spell_checker, whitelist)
+    except SpellCheckerError as ex:
+        api.log.error(str(ex))
+        return
+
     misspelling_map = defaultdict(set)
     for event in api.subs.events:
         if is_event_karaoke(event):
             continue
         text = ass_to_plaintext(event.text)
-        for _start, _end, word in spell_check_ass_line(dictionary, text):
-            if word not in whitelist:
-                misspelling_map[word].add(event.number)
+        for _start, _end, word in spell_check_ass_line(
+            custom_spell_checker, text
+        ):
+            misspelling_map[word].add(event.number)
 
     if misspelling_map:
         api.log.info("Misspelled words:")
