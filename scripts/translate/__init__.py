@@ -81,6 +81,8 @@ def put_text_chunks(events: T.List[AssEvent], chunks: T.List[str]) -> None:
                     text += chunks.pop(0)
                 else:
                     text += item.meta.text
+        if not text:
+            continue
         if event.text:
             event.text += "\\N" + text
         else:
