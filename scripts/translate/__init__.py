@@ -35,6 +35,7 @@ def translate(
     args += [text]
     result = run(args, check=True, stdout=PIPE, stderr=PIPE)
     response = result.stdout.decode().strip()
+    response = response.replace("u200b", "")
     if not response:
         raise ValueError("error")
     return response
