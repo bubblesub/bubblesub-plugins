@@ -67,9 +67,12 @@ class SpeechRecognitionCommand(BaseCommand):
                             subtitle.note = note
             return
 
-        for subtitle_group in divide_into_groups(
-            subtitles, self.args.max_workers
+        for i, subtitle_group in enumerate(
+            divide_into_groups(subtitles, self.args.max_workers)
         ):
+            if i:
+                time.sleep(self.args.sleep_time)
+
             with concurrent.futures.ThreadPoolExecutor(
                 max_workers=self.args.max_workers
             ) as executor:
@@ -128,7 +131,6 @@ class SpeechRecognitionCommand(BaseCommand):
             handle.seek(0, io.SEEK_SET)
             with sr.AudioFile(handle) as source:
                 audio = recognizer.record(source)
-            time.sleep(self.args.sleep_time)
             return recognizer.recognize_google(audio, language=self.args.code)
 
     @staticmethod
