@@ -20,7 +20,7 @@ NON_STUTTER_WORDS = {
     "uh-huh",
     "one-two",
 }
-WORDS_WITH_PERIOD = {"vs.", "Mr.", "Jr.", "U.F.O.", "a.k.a."}
+WORDS_WITH_PERIOD = {"vs.", "Mrs.", "Mr.", "Jr.", "U.F.O.", "a.k.a."}
 
 
 class BaseResult:
