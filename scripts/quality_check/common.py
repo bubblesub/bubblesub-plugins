@@ -17,6 +17,7 @@ NON_STUTTER_WORDS = {
     "part-time",
     "easy-peasy",
     "ta-da",
+    "ta-dah",
     "uh-huh",
     "one-two",
 }
