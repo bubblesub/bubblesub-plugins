@@ -19,6 +19,7 @@ NON_STUTTER_WORDS = {
     "ta-da",
     "ta-dah",
     "uh-huh",
+    "heh-heh",
     "one-two",
 }
 WORDS_WITH_PERIOD = {"vs.", "Mrs.", "Mr.", "Jr.", "U.F.O.", "a.k.a."}
