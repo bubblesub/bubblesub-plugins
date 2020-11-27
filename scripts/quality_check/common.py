@@ -19,6 +19,7 @@ NON_STUTTER_WORDS = {
     "ta-da",
     "ta-dah",
     "uh-huh",
+    "uh-oh",
     "heh-heh",
     "one-two",
 }
