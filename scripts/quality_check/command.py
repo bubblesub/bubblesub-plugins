@@ -69,6 +69,8 @@ class QualityCheckCommand(BaseCommand):
                 for result in list_violations(spell_check_lang, self.api)
                 if result.log_level in {LogLevel.Warning, LogLevel.Error}
             ]
+            if not violations:
+                return
             violated_indexes = sorted(
                 violation.event.index for violation in violations
             )
