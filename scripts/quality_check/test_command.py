@@ -1,9 +1,8 @@
 import re
 import typing as T
-from unittest.mock import MagicMock
+from unittest.mock import patch, MagicMock
 
 import pytest
-
 from bubblesub.api.log import LogLevel
 from bubblesub.fmt.ass.event import AssEvent, AssEventList
 
@@ -366,10 +365,10 @@ def test_check_quotes(
         (["Whatever,", "I'd go."], None),
         (["Whatever,", "I'll go."], None),
         (["Whatever,", "Not."], "possibly unended sentence"),
-        (["Whatever,", 'żółć.'], None),
+        (["Whatever,", "żółć."], None),
         (["Whatever,", '"Not."'], None),
-        (["Whatever,", '„Not.”'], None),
-        (["Whatever,", '“Not.”'], None),
+        (["Whatever,", "„Not.”"], None),
+        (["Whatever,", "“Not.”"], None),
         (["Japan vs.", "the rest."], None),
         (
             ["Japan vss.", "the rest."],
@@ -456,13 +455,15 @@ def test_check_unnecessary_breaks(text, violation_text):
     api = MagicMock()
     api.video.current_stream.aspect_ratio = 1
     api.subs.meta = {"PlayResX": 1280}
-    renderer = MagicMock()
-    renderer.render_raw.return_value = [
-        MagicMock(dst_x=0, dst_y=0, w=100, h=0, type=0)
-    ]
-    event_list = AssEventList()
-    event_list.append(AssEvent(text=text))
-    results = list(check_unnecessary_breaks(event_list[0], api, renderer))
+    with patch(
+        "quality_check.check_unnecessary_breaks.measure_frame_size",
+        return_value=(100, 0),
+    ):
+        event_list = AssEventList()
+        event_list.append(AssEvent(text=text))
+        renderer = MagicMock()
+        results = list(check_unnecessary_breaks(event_list[0], api, renderer))
+
     if violation_text is None:
         assert len(results) == 0
     else:

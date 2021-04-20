@@ -65,6 +65,7 @@ def measure_frame_size(
 ) -> T.Tuple[int, int]:
     if not any(style.name == event.style for style in renderer.style_list):
         return (0, 0)
+
     fake_event_list = AssEventList()
     fake_event_list.append(copy(event))
 
