@@ -38,7 +38,7 @@ def check_line_continuation(event: AssEvent) -> T.Iterable[BaseResult]:
         if regex.search(
             r"[,:\p{Ll}]\Z", text, flags=regex.M
         ) and not regex.search(
-            r'\A(I\s|I\'(m|d|ll)|\p{Ll}|[„”“"]\p{Lu})',
+            r'\A(I\s|I\'(m|d|ll|ve)|\p{Ll}|[„”“"]\p{Lu})',
             next_text,
             flags=regex.M,
         ):
