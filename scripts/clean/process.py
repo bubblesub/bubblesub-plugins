@@ -79,9 +79,21 @@ def fix_useless_ass_tags(text: str, style: T.Optional[AssStyle] = None) -> str:
                 last_state = item.alignment
             yield item
 
+    def remove_useless_karaoke(
+        ass_line: T.Iterable[ass_tag_parser.AssItem],
+    ) -> T.Iterable[ass_tag_parser.AssItem]:
+        for item in ass_line:
+            if (
+                isinstance(item, ass_tag_parser.AssTagKaraoke)
+                and item.duration == 0
+            ):
+                continue
+            yield item
+
     ass_line = remove_useless_italics(ass_line)
     ass_line = remove_useless_bold(ass_line)
     ass_line = remove_useless_alignment(ass_line)
+    ass_line = remove_useless_karaoke(ass_line)
 
     return ass_tag_parser.compose_ass(ass_line)
 
