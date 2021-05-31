@@ -174,6 +174,7 @@ MENU = [
             MenuCommand("&German", "sr de"),
             MenuCommand("&French", "sr fr"),
             MenuCommand("&Italian", "sr it"),
+            MenuCommand("&Spanish", "sr es"),
             MenuCommand("&Auto", "sr auto"),
         ],
     )
