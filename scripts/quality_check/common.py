@@ -14,14 +14,15 @@ NON_STUTTER_PREFIXES = {"half", "well"}
 NON_STUTTER_SUFFIXES = {"kun", "san", "chan", "smaa", "senpai", "sensei"}
 NON_STUTTER_WORDS = {
     "bye-bye",
-    "part-time",
     "easy-peasy",
+    "heh-heh",
+    "one-two",
+    "part-time",
+    "peek-a-boo",
     "ta-da",
     "ta-dah",
     "uh-huh",
     "uh-oh",
-    "heh-heh",
-    "one-two",
 }
 WORDS_WITH_PERIOD = {"vs.", "Mrs.", "Mr.", "Jr.", "U.F.O.", "a.k.a."}
 
