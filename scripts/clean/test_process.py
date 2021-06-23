@@ -1,6 +1,3 @@
-import re
-import typing as T
-
 import pytest
 
 from bubblesub.fmt.ass.event import AssEvent

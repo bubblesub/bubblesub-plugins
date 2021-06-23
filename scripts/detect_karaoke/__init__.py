@@ -72,7 +72,6 @@ class DetectKaraokeCommand(BaseCommand):
                 end
             )
 
-            sub_start = 0
             frame = self.get_frame(start_frame_idx)
 
             for frame_idx in range(start_frame_idx + 1, end_frame_idx):

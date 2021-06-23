@@ -138,7 +138,7 @@ def check_fonts(api: Api) -> None:
 
         result = locate_font(fonts, font_family, is_bold, is_italic)
         if not result:
-            api.log.warn(f"  font file not found")
+            api.log.warn("  font file not found")
             continue
 
         _weight, _font_path, font = result

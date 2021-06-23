@@ -21,7 +21,7 @@ class MacroType(enum.Enum):
 @dataclass
 class Macro:
     name: str
-    type: MacroType
+    macro_type: MacroType
     text: str
 
 
@@ -46,33 +46,35 @@ class ActorsTagger:
         self.running = False
         self._restore_hotkeys()
 
-    def store_macro(self, type: MacroType, name: str) -> None:
+    def store_macro(self, macro_type: MacroType, name: str) -> None:
         self._macros = [macro for macro in self._macros if macro.name != name]
         try:
             sub = self._api.subs.selected_events[0]
         except LookupError:
             pass
         else:
-            if type == MacroType.style:
+            if macro_type == MacroType.style:
                 text = sub.style
-            elif type == MacroType.text:
+            elif macro_type == MacroType.text:
                 text = sub.text
-            elif type == MacroType.actor:
+            elif macro_type == MacroType.actor:
                 text = sub.actor
             else:
                 raise NotImplementedError("not implemented")
-            self._macros.append(Macro(name=name, type=type, text=text))
+            self._macros.append(
+                Macro(name=name, macro_type=macro_type, text=text)
+            )
 
     def apply_macro(self, name: str) -> None:
         macro = self.get_macro(name)
         if not macro:
             return
         for sub in self._api.subs.selected_events:
-            if macro.type == MacroType.style:
+            if macro.macro_type == MacroType.style:
                 sub.style = macro.text
-            elif macro.type == MacroType.text:
+            elif macro.macro_type == MacroType.text:
                 sub.text = macro.text
-            elif macro.type == MacroType.actor:
+            elif macro.macro_type == MacroType.actor:
                 sub.actor = macro.text
             else:
                 raise NotImplementedError("not implemented")

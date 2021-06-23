@@ -54,7 +54,7 @@ class SpeechRecognitionCommand(BaseCommand):
             try:
                 note = self.recognize_audio_selection()
             except sr.UnknownValueError:
-                self.api.log.warn(f"not recognized")
+                self.api.log.warn("not recognized")
             except sr.RequestError as ex:
                 self.api.log.error(f"error ({ex})")
             else:

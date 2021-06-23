@@ -22,7 +22,7 @@ def fix_dangling_ass_tags(text: str) -> str:
 def fix_bad_dialogue_dashes(text: str) -> str:
     try:
         ass_line = ass_tag_parser.parse_ass(text)
-    except ass_tag_parser.ParseError as ex:
+    except ass_tag_parser.ParseError:
         # dumb replace
         return re.sub("^- ", "\N{EN DASH} ", text, flags=re.M)
     else:
@@ -43,7 +43,7 @@ def fix_bad_dialogue_dashes(text: str) -> str:
 def fix_useless_ass_tags(text: str, style: T.Optional[AssStyle] = None) -> str:
     try:
         ass_line = ass_tag_parser.parse_ass(text)
-    except ass_tag_parser.ParseError as ex:
+    except ass_tag_parser.ParseError:
         return text
 
     def remove_useless_italics(
@@ -101,7 +101,7 @@ def fix_useless_ass_tags(text: str, style: T.Optional[AssStyle] = None) -> str:
 def fix_whitespace(text: str) -> str:
     try:
         ass_line = ass_tag_parser.parse_ass(text)
-    except ass_tag_parser.ParseError as ex:
+    except ass_tag_parser.ParseError:
         # dumb replace
         return re.sub(" *\n *", "\n", text.strip(), flags=re.M)
 

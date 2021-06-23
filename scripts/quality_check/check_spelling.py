@@ -34,10 +34,12 @@ class WordList:
 class SpellCheckerProxy(BaseSpellChecker):
     def __init__(
         self,
+        language: str,
         spell_checker: BaseSpellChecker,
         whitelist: WordList,
         blacklist: WordList,
     ) -> None:
+        super().__init__(language=language)
         self.spell_checker = spell_checker
         self.whitelist = whitelist
         self.blacklist = blacklist
@@ -89,7 +91,7 @@ def check_spelling(spell_check_lang: T.Optional[str], api: Api) -> None:
     try:
         base_spell_checker = create_spell_checker(spell_check_lang)
         custom_spell_checker = SpellCheckerProxy(
-            base_spell_checker, whitelist, blacklist
+            spell_check_lang, base_spell_checker, whitelist, blacklist
         )
     except SpellCheckerError as ex:
         api.log.error(str(ex))

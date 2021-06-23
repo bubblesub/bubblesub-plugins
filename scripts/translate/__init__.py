@@ -59,7 +59,7 @@ def collect_text_chunks(events: T.List[AssEvent]) -> T.Iterable[str]:
         text = event.note
         try:
             ass_line = ass_tag_parser.parse_ass(text)
-        except ass_tag_parser.ParseError as ex:
+        except ass_tag_parser.ParseError:
             if text:
                 yield text
         else:
@@ -73,7 +73,7 @@ def put_text_chunks(events: T.List[AssEvent], chunks: T.List[str]) -> None:
         text = event.note
         try:
             ass_line = ass_tag_parser.parse_ass(text)
-        except ass_tag_parser.ParseError as ex:
+        except ass_tag_parser.ParseError:
             text = chunks.pop(0)
         else:
             text = ""
@@ -142,7 +142,7 @@ class GoogleTranslateCommand(BaseCommand):
                 time.sleep(self.args.sleep_time)
 
         if len(translated_chunks) != len(chunks):
-            self.api.log.error(f"mismatching number of chunks")
+            self.api.log.error("mismatching number of chunks")
             return
 
         self.api.log.info("OK")

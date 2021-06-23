@@ -71,7 +71,7 @@ class SaveVideoSampleCommand(BaseCommand):
 
                 command += [str(path)]
 
-                subprocess.run(command)
+                subprocess.run(command, check=False)
 
         # don't clog the UI thread
         self.api.log.info(f"saving video sample to {path}...")
