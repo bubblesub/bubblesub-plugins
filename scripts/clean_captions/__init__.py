@@ -2,7 +2,7 @@ import re
 
 from PyQt5 import QtWidgets
 
-from bubblesub.api.cmd import BaseCommand
+from bubblesub.api.cmd import BaseCommand, CommandUnavailable
 from bubblesub.cfg.menu import MenuCommand
 from bubblesub.fmt.ass.event import AssEvent
 from bubblesub.ui.util import load_dialog

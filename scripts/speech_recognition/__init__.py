@@ -6,7 +6,7 @@ import time
 import typing as T
 
 from bubblesub.api import Api
-from bubblesub.api.cmd import BaseCommand
+from bubblesub.api.cmd import BaseCommand, CommandUnavailable
 from bubblesub.cfg.menu import MenuCommand, SubMenu
 from bubblesub.cmd.common import SubtitlesSelection
 from bubblesub.fmt.ass.event import AssEvent

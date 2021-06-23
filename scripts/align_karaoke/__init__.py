@@ -3,7 +3,7 @@ import enum
 from PyQt5 import QtCore, QtGui, QtWidgets
 
 from bubblesub.api import Api
-from bubblesub.api.cmd import BaseCommand
+from bubblesub.api.cmd import BaseCommand, CommandUnavailable
 from bubblesub.cfg.menu import MenuCommand
 from bubblesub.ui.util import Dialog, async_dialog_exec
 

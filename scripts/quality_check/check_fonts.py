@@ -5,6 +5,7 @@ from pathlib import Path
 import ass_tag_parser
 
 from bubblesub.api import Api
+from bubblesub.api.cmd import CommandUnavailable
 
 try:
     import fontTools.ttLib as font_tools
