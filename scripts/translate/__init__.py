@@ -5,6 +5,7 @@ import typing as T
 from subprocess import PIPE, run
 
 import ass_tag_parser
+import requests
 
 from bubblesub.api import Api
 from bubblesub.api.cmd import BaseCommand
@@ -23,22 +24,45 @@ def divide_into_groups(
 
 
 def translate(
-    text: str, engine: str, source_code: str, target_code: str
+    api: Api,
+    lines: T.List[str],
+    engine: str,
+    source_code: str,
+    target_code: str,
 ) -> str:
-    if not text.strip():
-        return ""
+    if not lines:
+        return []
 
-    args = ["trans", "-b"]
-    args += ["-e", engine]
-    args += ["-s", source_code]
-    args += ["-t", target_code]
-    args += [text]
-    result = run(args, check=True, stdout=PIPE, stderr=PIPE)
-    response = result.stdout.decode().strip()
-    response = response.replace("u200b", "")
-    if not response:
-        raise ValueError("error")
-    return response
+    if engine == "deepl":
+        api_key = api.cfg.opt.get("plugins", {}).get("deepl_api_key")
+        if not api_key:
+            raise ValueError("missing plugins.deepl_api_key option.")
+        response = requests.get(
+            "https://api-free.deepl.com/v2/translate",
+            data={
+                "auth_key": api_key,
+                "text": lines,
+                "source_lang": source_code.upper(),
+                "target_lang": target_code.upper(),
+            },
+        )
+        response.raise_for_status()
+        return [
+            translation["text"]
+            for translation in response.json()["translations"]
+        ]
+    else:
+        args = ["trans", "-b"]
+        args += ["-e", engine]
+        args += ["-s", source_code]
+        args += ["-t", target_code]
+        args += ["\n".join(lines)]
+        result = run(args, check=True, stdout=PIPE, stderr=PIPE)
+        response = result.stdout.decode().strip()
+        response = response.replace("u200b", "")
+        if not response:
+            raise ValueError("error")
+        return response.split("\n")
 
 
 def preprocess(chunk: str) -> str:
@@ -123,10 +147,10 @@ class GoogleTranslateCommand(BaseCommand):
             )
             i += len(chunks_group)
 
-            lines = "\n".join(chunks_group)
             try:
                 translated_lines = translate(
-                    lines,
+                    self.api,
+                    chunks_group,
                     self.args.engine,
                     self.args.source_code,
                     self.args.target_code,
@@ -134,9 +158,7 @@ class GoogleTranslateCommand(BaseCommand):
             except ValueError as ex:
                 self.api.log.error(f"error ({ex})")
                 return
-            translated_chunks.extend(
-                map(postprocess, translated_lines.split("\n"))
-            )
+            translated_chunks.extend(map(postprocess, translated_lines))
 
             if chunks_groups:
                 time.sleep(self.args.sleep_time)
@@ -163,7 +185,7 @@ class GoogleTranslateCommand(BaseCommand):
             "-e",
             "--engine",
             help="engine to use",
-            choices=["bing", "google", "yandex"],
+            choices=["bing", "deepl", "google", "yandex"],
             default="google",
         )
         parser.add_argument(
