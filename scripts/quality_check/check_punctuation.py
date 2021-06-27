@@ -109,7 +109,7 @@ def check_punctuation(lang: str, event: AssEvent) -> T.Iterable[BaseResult]:
         if match.group(1) not in WORDS_WITH_PERIOD:
             yield Violation(event, "lowercase letter after sentence end")
 
-    match = re.search(r"^([A-Z][a-z]{,3})-([a-z]+)", text, flags=re.M)
+    match = re.search(r"^([A-Z][a-z]{,3})(-([a-z]+))+", text, flags=re.M)
     if match:
         if (
             match.group(0).lower() not in NON_STUTTER_WORDS
