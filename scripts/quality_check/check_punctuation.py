@@ -101,7 +101,7 @@ def check_punctuation(lang: str, event: AssEvent) -> T.Iterable[BaseResult]:
     if re.search(r"\s+'(t|re|s)\b", text):
         yield Violation(event, "whitespace before apostrophe")
 
-    if re.search(r" —|— ", text) and not is_event_title(event):
+    if re.search(r" —|— (?![A-Z])", text) and not is_event_title(event):
         yield Violation(event, "whitespace around —")
 
     match = re.search(r"(\w+[\.!?])\s+[a-z]", text, flags=re.M)
