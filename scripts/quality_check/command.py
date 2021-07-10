@@ -67,7 +67,7 @@ class QualityCheckCommand(BaseCommand):
             violations = [
                 result
                 for result in list_violations(spell_check_lang, self.api)
-                if result.log_level in {LogLevel.Warning, LogLevel.Error}
+                if result.log_level in {LogLevel.WARNING, LogLevel.ERROR}
             ]
             if not violations:
                 return

@@ -50,15 +50,15 @@ class BaseResult:
 
 
 class DebugInformation(BaseResult):
-    log_level = LogLevel.Debug
+    log_level = LogLevel.DEBUG
 
 
 class Information(BaseResult):
-    log_level = LogLevel.Info
+    log_level = LogLevel.INFO
 
 
 class Violation(BaseResult):
-    log_level = LogLevel.Warning
+    log_level = LogLevel.WARNING
 
 
 def measure_frame_size(
@@ -154,20 +154,24 @@ def get_next_non_empty_event(event: AssEvent) -> T.Optional[AssEvent]:
     return None
 
 
+def strip_brackets(text: str) -> str:
+    return text.lstrip("[(").rstrip(")]")
+
+
 def is_event_sign(event: AssEvent) -> bool:
-    return event.actor == "(sign)"
+    return strip_brackets(event.actor) == "sign"
 
 
 def is_event_title(event: AssEvent) -> bool:
-    return event.actor == "[title]"
+    return strip_brackets(event.actor) == "title"
 
 
 def is_event_karaoke(event: AssEvent) -> bool:
-    return event.actor == "[karaoke]"
+    return strip_brackets(event.actor) == "karaoke"
 
 
 def is_event_credits(event: AssEvent) -> bool:
-    return event.actor == "[credits]"
+    return strip_brackets(event.actor) == "credits"
 
 
 def is_event_dialog(event: AssEvent) -> bool:
