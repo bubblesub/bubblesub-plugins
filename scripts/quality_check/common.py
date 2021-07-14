@@ -159,7 +159,11 @@ def strip_brackets(text: str) -> str:
 
 
 def is_event_sign(event: AssEvent) -> bool:
-    return strip_brackets(event.actor) == "sign"
+    return strip_brackets(event.actor) in {
+        "sign",
+        "episode title",
+        "series title",
+    }
 
 
 def is_event_title(event: AssEvent) -> bool:
