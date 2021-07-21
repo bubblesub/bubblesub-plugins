@@ -4,6 +4,7 @@ from unittest.mock import Mock
 import pytest
 
 from bubblesub.fmt.ass.event import AssEvent, AssEventList
+
 from quality_check.check.line_continuation import CheckLineContinuation
 
 

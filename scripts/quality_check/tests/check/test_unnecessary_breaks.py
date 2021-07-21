@@ -4,6 +4,7 @@ from unittest.mock import Mock, patch
 import pytest
 
 from bubblesub.fmt.ass.event import AssEvent, AssEventList
+
 from quality_check.check.unnecessary_breaks import CheckUnnecessaryBreaks
 
 

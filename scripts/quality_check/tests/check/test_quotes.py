@@ -6,6 +6,7 @@ import pytest
 
 from bubblesub.api.log import LogLevel
 from bubblesub.fmt.ass.event import AssEvent, AssEventList
+
 from quality_check.check.quotes import CheckQuotes
 
 

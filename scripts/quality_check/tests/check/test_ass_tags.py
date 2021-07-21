@@ -5,6 +5,7 @@ from unittest.mock import Mock
 import pytest
 
 from bubblesub.fmt.ass.event import AssEvent, AssEventList
+
 from quality_check.check.ass_tags import CheckAssTags
 
 
