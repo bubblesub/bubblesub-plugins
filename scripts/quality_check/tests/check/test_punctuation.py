@@ -12,6 +12,7 @@ def check_punctuation() -> CheckPunctuation:
     return CheckPunctuation(api=Mock(), renderer=Mock())
 
 
+@pytest.mark.asyncio
 @pytest.mark.parametrize(
     "text, violation_text",
     [
@@ -119,13 +120,15 @@ def check_punctuation() -> CheckPunctuation:
         (";,", "extra comma or dot"),
     ],
 )
-def test_check_punctuation(
+async def test_check_punctuation(
     text: str,
     violation_text: T.Optional[str],
     check_punctuation: CheckPunctuation,
 ) -> None:
     event = AssEvent(text=text)
-    results = list(check_punctuation.run_for_event(event))
+    results = [
+        result async for result in check_punctuation.run_for_event(event)
+    ]
     if violation_text is None:
         assert len(results) == 0
     else:

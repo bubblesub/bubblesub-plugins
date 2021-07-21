@@ -15,6 +15,7 @@ def check_unnecessary_breaks() -> CheckUnnecessaryBreaks:
     return CheckUnnecessaryBreaks(api=api, renderer=Mock())
 
 
+@pytest.mark.asyncio
 @pytest.mark.parametrize(
     "text, violation_text",
     [
@@ -23,7 +24,7 @@ def check_unnecessary_breaks() -> CheckUnnecessaryBreaks:
         ("text.\\Ntext", None),
     ],
 )
-def test_check_unnecessary_breaks(
+async def test_check_unnecessary_breaks(
     text: str,
     violation_text: T.Optional[str],
     check_unnecessary_breaks: CheckUnnecessaryBreaks,
@@ -34,7 +35,12 @@ def test_check_unnecessary_breaks(
     ):
         event_list = AssEventList()
         event_list.append(AssEvent(text=text))
-        results = list(check_unnecessary_breaks.run_for_event(event_list[0]))
+        results = [
+            result
+            async for result in check_unnecessary_breaks.run_for_event(
+                event_list[0]
+            )
+        ]
 
     if violation_text is None:
         assert len(results) == 0

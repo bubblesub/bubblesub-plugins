@@ -2,8 +2,8 @@ import typing as T
 from unittest.mock import Mock
 
 import pytest
-from bubblesub.fmt.ass.event import AssEvent, AssEventList
 
+from bubblesub.fmt.ass.event import AssEvent, AssEventList
 from quality_check.check.line_continuation import CheckLineContinuation
 
 
@@ -14,6 +14,7 @@ def check_line_continuation() -> CheckLineContinuation:
     )
 
 
+@pytest.mark.asyncio
 @pytest.mark.parametrize(
     "texts, violation_text",
     [
@@ -49,7 +50,7 @@ def check_line_continuation() -> CheckLineContinuation:
         ),
     ],
 )
-def test_check_line_continuation(
+async def test_check_line_continuation(
     texts: T.List[str],
     violation_text: T.Optional[str],
     check_line_continuation: CheckLineContinuation,
@@ -60,7 +61,8 @@ def test_check_line_continuation(
 
     results = []
     for event in check_line_continuation.api.subs.events:
-        results += list(check_line_continuation.run_for_event(event))
+        async for result in check_line_continuation.run_for_event(event):
+            results.append(result)
 
     if violation_text is None:
         assert len(results) == 0

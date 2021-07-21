@@ -60,7 +60,7 @@ class SpellCheckerProxy(BaseSpellChecker):
 
 
 class CheckSpelling(BaseCheck):
-    def run(self) -> None:
+    async def run(self) -> None:
         if not self.api.subs.path:
             return
 

@@ -12,6 +12,7 @@ def check_double_words() -> CheckDoubleWords:
     return CheckDoubleWords(api=Mock(), renderer=Mock())
 
 
+@pytest.mark.asyncio
 @pytest.mark.parametrize(
     "text, violation_text",
     [
@@ -22,14 +23,17 @@ def check_double_words() -> CheckDoubleWords:
         ("text{}text", None),
     ],
 )
-def test_check_double_words(
+async def test_check_double_words(
     text: str,
     violation_text: T.Optional[str],
     check_double_words: CheckDoubleWords,
 ):
     event_list = AssEventList()
     event_list.append(AssEvent(text=text))
-    results = list(check_double_words.run_for_event(event_list[0]))
+    results = [
+        result
+        async for result in check_double_words.run_for_event(event_list[0])
+    ]
     if violation_text is None:
         assert len(results) == 0
     else:

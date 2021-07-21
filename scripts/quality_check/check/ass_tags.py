@@ -22,7 +22,7 @@ def get(source: T.List[T.Any], idx: int) -> T.Any:
 
 
 class CheckAssTags(BaseEventCheck):
-    def run_for_event(self, event: AssEvent) -> T.Iterable[BaseResult]:
+    async def run_for_event(self, event: AssEvent) -> T.Iterable[BaseResult]:
         try:
             ass_line = parse_ass(event.text)
         except ParseError as ex:

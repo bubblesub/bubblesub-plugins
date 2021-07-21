@@ -14,6 +14,7 @@ def check_quotes() -> CheckQuotes:
     return CheckQuotes(api=Mock(), renderer=Mock())
 
 
+@pytest.mark.asyncio
 @pytest.mark.parametrize(
     "text, expected_violations",
     [
@@ -132,14 +133,16 @@ def check_quotes() -> CheckQuotes:
         ),
     ],
 )
-def test_check_quotes(
+async def test_check_quotes(
     text: str,
     expected_violations: T.List[T.Tuple[str, LogLevel]],
     check_quotes: CheckQuotes,
 ) -> None:
     event_list = AssEventList()
     event_list.append(AssEvent(text=text))
-    results = list(check_quotes.run_for_event(event_list[0]))
+    results = [
+        result async for result in check_quotes.run_for_event(event_list[0])
+    ]
     assert len(results) == len(expected_violations)
     for expected_violation, result in zip(expected_violations, results):
         violation_text_re, log_level = expected_violation

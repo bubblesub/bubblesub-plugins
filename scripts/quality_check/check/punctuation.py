@@ -15,7 +15,7 @@ from .base import BaseEventCheck, BaseResult, Violation
 
 
 class CheckPunctuation(BaseEventCheck):
-    def run_for_event(self, event: AssEvent) -> T.Iterable[BaseResult]:
+    async def run_for_event(self, event: AssEvent) -> T.Iterable[BaseResult]:
         lang = self.spell_check_lang
         text = ass_to_plaintext(event.text)
 

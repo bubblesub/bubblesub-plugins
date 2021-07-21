@@ -1,6 +1,7 @@
 import typing as T
 
 import regex
+
 from bubblesub.api import Api
 from bubblesub.ass_renderer import AssRenderer
 from bubblesub.fmt.ass.event import AssEvent
@@ -36,7 +37,7 @@ class CheckLineContinuation(BaseEventCheck):
                 self.backwards_map[event.index] = last
             last = event
 
-    def run_for_event(self, event: AssEvent) -> T.Iterable[BaseResult]:
+    async def run_for_event(self, event: AssEvent) -> T.Iterable[BaseResult]:
         text = ass_to_plaintext(event.text)
 
         prev_event = self.backwards_map.get(event.index)

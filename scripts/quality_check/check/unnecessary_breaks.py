@@ -17,7 +17,7 @@ from .base import BaseEventCheck, BaseResult, Information
 
 
 class CheckUnnecessaryBreaks(BaseEventCheck):
-    def run_for_event(self, event: AssEvent) -> T.Iterable[BaseResult]:
+    async def run_for_event(self, event: AssEvent) -> T.Iterable[BaseResult]:
         if r"\N" not in event.text:
             return
 

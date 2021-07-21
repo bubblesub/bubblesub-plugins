@@ -4,7 +4,7 @@ from .base import BaseCheck
 
 
 class CheckStyleStats(BaseCheck):
-    def run(self) -> None:
+    async def run(self) -> None:
         self.api.log.info("Styles summary:")
         styles = defaultdict(int)
 

@@ -8,7 +8,7 @@ from .base import BaseEventCheck, BaseResult, Violation
 
 
 class CheckDoubleWords(BaseEventCheck):
-    def run_for_event(self, event: AssEvent) -> T.Iterable[BaseResult]:
+    async def run_for_event(self, event: AssEvent) -> T.Iterable[BaseResult]:
         text = ass_to_plaintext(event.text)
 
         for pair in re.finditer(r"(?<!\w)(\w+)\s+\1(?!\w)", text):

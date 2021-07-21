@@ -19,7 +19,7 @@ class CheckLongLines(BaseEventCheck):
         super().__init__(api, renderer)
         self.optimal_line_heights = get_optimal_line_heights(api, renderer)
 
-    def run_for_event(self, event: AssEvent) -> T.Iterable[BaseResult]:
+    async def run_for_event(self, event: AssEvent) -> T.Iterable[BaseResult]:
         if is_event_karaoke(event):
             return
 

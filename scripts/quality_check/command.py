@@ -29,7 +29,7 @@ from .check.fonts import get_fonts
 from .common import benchmark, get_height, get_width
 
 
-def list_violations(api: Api) -> T.Iterable[BaseResult]:
+async def list_violations(api: Api) -> T.Iterable[BaseResult]:
     renderer = AssRenderer()
     renderer.set_source(
         style_list=api.subs.styles,
@@ -51,7 +51,8 @@ def list_violations(api: Api) -> T.Iterable[BaseResult]:
     ]:
         with benchmark(api, f"{check_cls}"):
             check = check_cls(api, renderer)
-            yield from check.get_violations()
+            async for violation in check.get_violations():
+                yield violation
 
 
 class QualityCheckCommand(BaseCommand):
@@ -76,7 +77,7 @@ class QualityCheckCommand(BaseCommand):
         if self.args.focus_prev or self.args.focus_next:
             violations = [
                 result
-                for result in list_violations(self.api)
+                async for result in list_violations(self.api)
                 if result.log_level in {LogLevel.WARNING, LogLevel.ERROR}
             ]
             if not violations:
@@ -107,7 +108,7 @@ class QualityCheckCommand(BaseCommand):
                     self.api.log.log(result.log_level, repr(result))
             return
 
-        for result in list_violations(self.api):
+        async for result in list_violations(self.api):
             self.api.log.log(result.log_level, repr(result))
 
         for check_cls in [
@@ -119,4 +120,4 @@ class QualityCheckCommand(BaseCommand):
         ]:
             with benchmark(self.api, f"{check_cls}"):
                 check = check_cls(self.api)
-                check.run()
+                await check.run()

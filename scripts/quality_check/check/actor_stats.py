@@ -4,7 +4,7 @@ from .base import BaseCheck
 
 
 class CheckActorStats(BaseCheck):
-    def run(self) -> None:
+    async def run(self) -> None:
         self.api.log.info("Actors summary:")
         actors = defaultdict(int)
 

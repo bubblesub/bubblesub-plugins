@@ -13,6 +13,7 @@ def check_ass_tags() -> CheckAssTags:
     return CheckAssTags(api=Mock(), renderer=Mock())
 
 
+@pytest.mark.asyncio
 @pytest.mark.parametrize(
     "text, violation_text_re",
     [
@@ -30,12 +31,14 @@ def check_ass_tags() -> CheckAssTags:
         ("{\\an8}{\\fs5}", "disjointed tags"),
     ],
 )
-def test_check_ass_tags(
+async def test_check_ass_tags(
     text: str, violation_text_re: T.Optional[str], check_ass_tags: CheckAssTags
 ):
     event_list = AssEventList()
     event_list.append(AssEvent(text=text))
-    results = list(check_ass_tags.run_for_event(event_list[0]))
+    results = [
+        result async for result in check_ass_tags.run_for_event(event_list[0])
+    ]
     if violation_text_re is None:
         assert len(results) == 0
     else:

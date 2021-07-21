@@ -4,6 +4,7 @@ from functools import cache
 from pathlib import Path
 
 import ass_tag_parser
+
 from bubblesub.api import Api
 from bubblesub.api.cmd import CommandUnavailable
 
@@ -130,7 +131,7 @@ def locate_font(
 
 
 class CheckFonts(BaseCheck):
-    def run(self) -> None:
+    async def run(self) -> None:
         self.api.log.info("Fonts summary:")
 
         results = get_used_font_styles(self.api)

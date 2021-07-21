@@ -7,7 +7,7 @@ from .base import BaseEventCheck, BaseResult, Violation
 
 
 class CheckStyleValidity(BaseEventCheck):
-    def run_for_event(self, event: AssEvent) -> T.Iterable[BaseResult]:
+    async def run_for_event(self, event: AssEvent) -> T.Iterable[BaseResult]:
         if (
             event.style.startswith("[")
             and event.style.endswith("]")

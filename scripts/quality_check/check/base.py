@@ -12,7 +12,7 @@ class BaseCheck:
     def __init__(self, api: Api) -> None:
         self.api = api
 
-    def run(self) -> None:
+    async def run(self) -> None:
         raise NotImplementedError("not implemented")
 
     @property
@@ -59,10 +59,14 @@ class BaseEventCheck(BaseCheck):
         super().__init__(api)
         self.renderer = renderer
 
-    def run(self) -> None:
-        for result in self.get_violations():
+    async def run(self) -> None:
+        async for result in self.get_violations():
             self.api.log.log(result.log_level, repr(result))
 
-    def get_violations(self) -> None:
+    async def run_for_event(self, event: AssEvent) -> T.Iterable[BaseResult]:
+        raise NotImplementedError("not implemented")
+
+    async def get_violations(self) -> T.Iterable[BaseResult]:
         for event in self.api.subs.events:
-            yield from self.run_for_event(event)
+            async for violation in self.run_for_event(event):
+                yield violation

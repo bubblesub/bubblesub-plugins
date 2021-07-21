@@ -9,7 +9,7 @@ from .base import BaseCheck
 class CheckPunctuationStats(BaseCheck):
     CHARS = "!…"
 
-    def run(self) -> None:
+    async def run(self) -> None:
         stats = defaultdict(int)
         for event in self.api.subs.events:
             if is_event_title(event) or is_event_karaoke(event):
