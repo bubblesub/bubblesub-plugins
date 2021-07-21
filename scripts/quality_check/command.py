@@ -25,6 +25,7 @@ from .check import (
     CheckStyleValidity,
     CheckUnnecessaryBreaks,
 )
+from .check.fonts import get_fonts
 from .common import get_height, get_width
 
 
@@ -60,8 +61,17 @@ class QualityCheckCommand(BaseCommand):
     def decorate_parser(api: Api, parser: argparse.ArgumentParser) -> None:
         parser.add_argument("-p", "--focus-prev", action="store_true")
         parser.add_argument("-n", "--focus-next", action="store_true")
+        parser.add_argument(
+            "-nc",
+            action="store_true",
+            dest="clear_cache",
+            help="clear font cache",
+        )
 
     async def run(self):
+        if self.args.clear_cache:
+            get_fonts.cache_clear()
+
         if self.args.focus_prev or self.args.focus_next:
             violations = [
                 result

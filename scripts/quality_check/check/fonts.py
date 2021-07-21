@@ -1,9 +1,9 @@
 import typing as T
 from collections import defaultdict
+from functools import cache
 from pathlib import Path
 
 import ass_tag_parser
-
 from bubblesub.api import Api
 from bubblesub.api.cmd import CommandUnavailable
 
@@ -14,6 +14,7 @@ try:
 except ImportError as ex:
     raise CommandUnavailable(f"{ex.name} is not installed") from ex
 
+FONTS_DIR = Path("~/.config/oc-fonts").expanduser()
 TT_NAME_ID_FONT_FAMILY = 1
 TT_NAME_ID_FULL_NAME = 4
 TT_NAME_ID_TYPOGRAPHIC_FAMILY = 16
@@ -99,12 +100,13 @@ def get_font_description(
     return font_family
 
 
+@cache
 def get_fonts(api) -> T.Dict[Path, FontInfo]:
     if not api.subs.path:
         return {}
 
     ret: T.Dict[Path, FontInfo] = {}
-    for path in Path("~/.config/oc-fonts").expanduser().iterdir():
+    for path in FONTS_DIR.iterdir():
         if path.is_file():
             try:
                 ret[path] = FontInfo(path)
