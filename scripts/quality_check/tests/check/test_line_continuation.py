@@ -2,14 +2,16 @@ import typing as T
 from unittest.mock import Mock
 
 import pytest
-
 from bubblesub.fmt.ass.event import AssEvent, AssEventList
+
 from quality_check.check.line_continuation import CheckLineContinuation
 
 
 @pytest.fixture
 def check_line_continuation() -> CheckLineContinuation:
-    return CheckLineContinuation(api=Mock(), renderer=Mock())
+    return CheckLineContinuation(
+        api=Mock(subs=Mock(events=AssEventList())), renderer=Mock()
+    )
 
 
 @pytest.mark.parametrize(
@@ -52,12 +54,12 @@ def test_check_line_continuation(
     violation_text: T.Optional[str],
     check_line_continuation: CheckLineContinuation,
 ) -> None:
-    event_list = AssEventList()
     for text in texts:
-        event_list.append(AssEvent(text=text))
+        check_line_continuation.api.subs.events.append(AssEvent(text=text))
+    check_line_continuation.construct_event_map()
 
     results = []
-    for event in event_list:
+    for event in check_line_continuation.api.subs.events:
         results += list(check_line_continuation.run_for_event(event))
 
     if violation_text is None:

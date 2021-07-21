@@ -8,8 +8,8 @@ class CheckStyleStats(BaseCheck):
         self.api.log.info("Styles summary:")
         styles = defaultdict(int)
 
-        for line in self.api.subs.events:
-            styles[line.style] += 1
+        for event in self.api.subs.events:
+            styles[event.style] += 1
 
         for style, occurrences in sorted(
             styles.items(), key=lambda kv: -kv[1]

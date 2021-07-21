@@ -8,8 +8,8 @@ class CheckActorStats(BaseCheck):
         self.api.log.info("Actors summary:")
         actors = defaultdict(int)
 
-        for line in self.api.subs.events:
-            actors[line.actor] += 1
+        for event in self.api.subs.events:
+            actors[event.actor] += 1
 
         for actor, occurrences in sorted(
             actors.items(), key=lambda kv: -kv[1]
