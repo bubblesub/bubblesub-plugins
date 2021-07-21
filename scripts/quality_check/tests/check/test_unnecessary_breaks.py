@@ -3,16 +3,13 @@ from unittest.mock import Mock, patch
 
 import pytest
 
-from bubblesub.fmt.ass.event import AssEvent, AssEventList
+from bubblesub.fmt.ass.event import AssEvent
 
 from quality_check.check.unnecessary_breaks import CheckUnnecessaryBreaks
 
 
 @pytest.fixture
-def check_unnecessary_breaks() -> CheckUnnecessaryBreaks:
-    api = Mock()
-    api.video.current_stream.aspect_ratio = 1
-    api.subs.meta = {"PlayResX": 1280}
+def check_unnecessary_breaks(api: Mock) -> CheckUnnecessaryBreaks:
     return CheckUnnecessaryBreaks(api=api, renderer=Mock())
 
 
@@ -30,17 +27,17 @@ async def test_check_unnecessary_breaks(
     violation_text: T.Optional[str],
     check_unnecessary_breaks: CheckUnnecessaryBreaks,
 ):
+    event = AssEvent(text=text)
+    check_unnecessary_breaks.api.subs.events.append(event)
+    check_unnecessary_breaks.construct_event_map()
+
     with patch(
         "quality_check.check.unnecessary_breaks.measure_frame_size",
         return_value=(100, 0),
     ):
-        event_list = AssEventList()
-        event_list.append(AssEvent(text=text))
         results = [
             result
-            async for result in check_unnecessary_breaks.run_for_event(
-                event_list[0]
-            )
+            async for result in check_unnecessary_breaks.run_for_event(event)
         ]
 
     if violation_text is None:

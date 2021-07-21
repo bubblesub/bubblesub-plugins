@@ -7,7 +7,6 @@ from bubblesub.api import Api
 from bubblesub.ass_renderer import AssRenderer
 from bubblesub.fmt.ass.event import AssEvent, AssEventList
 from bubblesub.fmt.ass.meta import AssMeta
-from bubblesub.fmt.ass.util import ass_to_plaintext
 
 WIDTH_MULTIPLIERS = {1: 0.7, 2: 0.9}
 
@@ -101,24 +100,6 @@ def get_height(api: Api) -> int:
 
 def get_width(api: Api) -> int:
     return int(api.subs.meta.get("PlayResX", "0"))
-
-
-def get_prev_non_empty_event(event: AssEvent) -> T.Optional[AssEvent]:
-    event = event.prev
-    while event:
-        if ass_to_plaintext(event.text) and not event.is_comment:
-            return event
-        event = event.prev
-    return None
-
-
-def get_next_non_empty_event(event: AssEvent) -> T.Optional[AssEvent]:
-    event = event.next
-    while event:
-        if ass_to_plaintext(event.text) and not event.is_comment:
-            return event
-        event = event.next
-    return None
 
 
 def strip_brackets(text: str) -> str:

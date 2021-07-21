@@ -3,16 +3,14 @@ from unittest.mock import Mock
 
 import pytest
 
-from bubblesub.fmt.ass.event import AssEvent, AssEventList
+from bubblesub.fmt.ass.event import AssEvent
 
 from quality_check.check.line_continuation import CheckLineContinuation
 
 
 @pytest.fixture
-def check_line_continuation() -> CheckLineContinuation:
-    return CheckLineContinuation(
-        api=Mock(subs=Mock(events=AssEventList())), renderer=Mock()
-    )
+def check_line_continuation(api: Mock) -> CheckLineContinuation:
+    return CheckLineContinuation(api=api, renderer=Mock())
 
 
 @pytest.mark.asyncio

@@ -3,7 +3,7 @@ import typing as T
 from bubblesub.fmt.ass.event import AssEvent
 from bubblesub.fmt.ass.util import ass_to_plaintext, character_count
 
-from ..common import get_next_non_empty_event, is_event_karaoke
+from ..common import is_event_karaoke
 from .base import BaseEventCheck, BaseResult, Violation
 
 MIN_DURATION = 250  # milliseconds
@@ -25,7 +25,7 @@ class CheckDurations(BaseEventCheck):
         elif event.duration < MIN_DURATION:
             yield Violation(event, f"duration shorter than {MIN_DURATION} ms")
 
-        next_event = get_next_non_empty_event(event)
+        next_event = self.get_next_non_empty_event(event)
 
         if next_event and not (
             is_event_karaoke(next_event) and is_event_karaoke(event)

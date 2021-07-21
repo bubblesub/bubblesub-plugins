@@ -9,8 +9,8 @@ from quality_check.check.punctuation import CheckPunctuation
 
 
 @pytest.fixture
-def check_punctuation() -> CheckPunctuation:
-    return CheckPunctuation(api=Mock(), renderer=Mock())
+def check_punctuation(api: Mock) -> CheckPunctuation:
+    return CheckPunctuation(api=api, renderer=Mock())
 
 
 @pytest.mark.asyncio
@@ -127,6 +127,8 @@ async def test_check_punctuation(
     check_punctuation: CheckPunctuation,
 ) -> None:
     event = AssEvent(text=text)
+    check_punctuation.api.subs.events.append(event)
+    check_punctuation.construct_event_map()
     results = [
         result async for result in check_punctuation.run_for_event(event)
     ]

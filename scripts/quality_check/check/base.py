@@ -4,6 +4,7 @@ from bubblesub.api import Api
 from bubblesub.api.log import LogLevel
 from bubblesub.ass_renderer import AssRenderer
 from bubblesub.fmt.ass.event import AssEvent
+from bubblesub.fmt.ass.util import ass_to_plaintext
 
 
 class BaseCheck:
@@ -56,6 +57,7 @@ class BaseEventCheck(BaseCheck):
     def __init__(self, api: Api, renderer: AssRenderer) -> None:
         super().__init__(api)
         self.renderer = renderer
+        self.construct_event_map()
 
     async def run(self) -> None:
         async for result in self.get_violations():
@@ -68,3 +70,29 @@ class BaseEventCheck(BaseCheck):
         for event in self.api.subs.events:
             async for violation in self.run_for_event(event):
                 yield violation
+
+    def construct_event_map(self) -> None:
+        non_empty_events = [
+            event
+            for event in self.api.subs.events
+            if ass_to_plaintext(event.text) and not event.is_comment
+        ]
+
+        self.forwards_event_map = {}
+        self.backwards_event_map = {}
+        last: T.Optional[AssEvent] = None
+        for event in non_empty_events:
+            if last:
+                self.forwards_event_map[last.index] = event
+                self.backwards_event_map[event.index] = last
+            last = event
+
+    def get_prev_non_empty_event(
+        self, event: AssEvent
+    ) -> T.Optional[AssEvent]:
+        return self.backwards_event_map.get(event.index)
+
+    def get_next_non_empty_event(
+        self, event: AssEvent
+    ) -> T.Optional[AssEvent]:
+        return self.forwards_event_map.get(event.index)

@@ -4,14 +4,14 @@ from unittest.mock import Mock
 
 import pytest
 
-from bubblesub.fmt.ass.event import AssEvent, AssEventList
+from bubblesub.fmt.ass.event import AssEvent
 
 from quality_check.check.ass_tags import CheckAssTags
 
 
 @pytest.fixture
-def check_ass_tags() -> CheckAssTags:
-    return CheckAssTags(api=Mock(), renderer=Mock())
+def check_ass_tags(api: Mock) -> CheckAssTags:
+    return CheckAssTags(api=api, renderer=Mock())
 
 
 @pytest.mark.asyncio
@@ -35,11 +35,10 @@ def check_ass_tags() -> CheckAssTags:
 async def test_check_ass_tags(
     text: str, violation_text_re: T.Optional[str], check_ass_tags: CheckAssTags
 ):
-    event_list = AssEventList()
-    event_list.append(AssEvent(text=text))
-    results = [
-        result async for result in check_ass_tags.run_for_event(event_list[0])
-    ]
+    event = AssEvent(text=text)
+    check_ass_tags.api.subs.events.append(event)
+    check_ass_tags.construct_event_map()
+    results = [result async for result in check_ass_tags.run_for_event(event)]
     if violation_text_re is None:
         assert len(results) == 0
     else:
