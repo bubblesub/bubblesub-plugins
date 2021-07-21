@@ -1,18 +1,12 @@
 import typing as T
 
 import regex
-
 from bubblesub.api import Api
 from bubblesub.ass_renderer import AssRenderer
 from bubblesub.fmt.ass.event import AssEvent
 from bubblesub.fmt.ass.util import ass_to_plaintext
 
-from ..common import (
-    WORDS_WITH_PERIOD,
-    get_next_non_empty_event,
-    get_prev_non_empty_event,
-    is_event_dialog,
-)
+from ..common import WORDS_WITH_PERIOD, is_event_dialog
 from .base import BaseEventCheck, BaseResult, Violation
 
 

@@ -4,7 +4,6 @@ from copy import copy
 from datetime import datetime
 
 from bubblesub.api import Api
-from bubblesub.api.log import LogLevel
 from bubblesub.ass_renderer import AssRenderer
 from bubblesub.fmt.ass.event import AssEvent, AssEventList
 from bubblesub.fmt.ass.meta import AssMeta

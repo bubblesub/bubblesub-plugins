@@ -1,6 +1,5 @@
 import argparse
 import bisect
-import re
 import typing as T
 
 from bubblesub.api import Api
