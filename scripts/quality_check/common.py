@@ -1,5 +1,7 @@
 import typing as T
+from contextlib import contextmanager
 from copy import copy
+from datetime import datetime
 
 from bubblesub.api import Api
 from bubblesub.api.log import LogLevel
@@ -151,3 +153,12 @@ def is_event_dialog(event: AssEvent) -> bool:
         or is_event_karaoke(event)
         or is_event_credits(event)
     )
+
+
+@contextmanager
+def benchmark(api: Api, message: str) -> None:
+    start = datetime.now()
+    yield
+    end = datetime.now()
+    duration = end - start
+    api.log.debug(f"{message}: {duration}")

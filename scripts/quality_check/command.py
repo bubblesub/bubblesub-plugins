@@ -26,7 +26,7 @@ from .check import (
     CheckUnnecessaryBreaks,
 )
 from .check.fonts import get_fonts
-from .common import get_height, get_width
+from .common import benchmark, get_height, get_width
 
 
 def list_violations(api: Api) -> T.Iterable[BaseResult]:
@@ -49,8 +49,9 @@ def list_violations(api: Api) -> T.Iterable[BaseResult]:
         CheckUnnecessaryBreaks,
         CheckLongLines,
     ]:
-        check = check_cls(api, renderer)
-        yield from check.get_violations()
+        with benchmark(api, f"{check_cls}"):
+            check = check_cls(api, renderer)
+            yield from check.get_violations()
 
 
 class QualityCheckCommand(BaseCommand):
@@ -116,5 +117,6 @@ class QualityCheckCommand(BaseCommand):
             CheckFonts,
             CheckPunctuationStats,
         ]:
-            check = check_cls(self.api)
-            check.run()
+            with benchmark(self.api, f"{check_cls}"):
+                check = check_cls(self.api)
+                check.run()
