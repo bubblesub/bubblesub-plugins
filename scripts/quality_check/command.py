@@ -22,6 +22,7 @@ from .check import (
     CheckSpelling,
     CheckStyleStats,
     CheckStyleValidity,
+    CheckTimes,
     CheckUnnecessaryBreaks,
 )
 from .check.fonts import get_fonts
@@ -47,6 +48,7 @@ async def list_violations(api: Api) -> T.Iterable[BaseResult]:
         CheckDoubleWords,
         CheckUnnecessaryBreaks,
         CheckLongLines,
+        CheckTimes,
     ]:
         with benchmark(api, f"{check_cls}"):
             check = check_cls(api, renderer)

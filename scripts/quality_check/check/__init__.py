@@ -19,6 +19,7 @@ from .quotes import CheckQuotes
 from .spelling import CheckSpelling
 from .style_stats import CheckStyleStats
 from .style_validity import CheckStyleValidity
+from .times import CheckTimes
 from .unnecessary_breaks import CheckUnnecessaryBreaks
 
 __all__ = [
@@ -38,6 +39,7 @@ __all__ = [
     "CheckSpelling",
     "CheckStyleStats",
     "CheckStyleValidity",
+    "CheckTimes",
     "CheckUnnecessaryBreaks",
     "DebugInformation",
     "Information",
