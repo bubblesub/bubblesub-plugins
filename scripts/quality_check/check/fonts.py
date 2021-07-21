@@ -7,10 +7,12 @@ import ass_tag_parser
 from bubblesub.api import Api
 from bubblesub.api.cmd import CommandUnavailable
 
+from .base import BaseCheck
+
 try:
     import fontTools.ttLib as font_tools
 except ImportError as ex:
-    raise CommandUnavailable(f"{ex.name} is not installed")
+    raise CommandUnavailable(f"{ex.name} is not installed") from ex
 
 TT_NAME_ID_FONT_FAMILY = 1
 TT_NAME_ID_FULL_NAME = 4
@@ -125,27 +127,30 @@ def locate_font(
     return candidates[0]
 
 
-def check_fonts(api: Api) -> None:
-    api.log.info("Fonts summary:")
+class CheckFonts(BaseCheck):
+    def run(self) -> None:
+        self.api.log.info("Fonts summary:")
 
-    results = get_used_font_styles(api)
-    fonts = get_fonts(api)
-    for font_specs, glyphs in results.items():
-        font_family, is_bold, is_italic = font_specs
-        api.log.info(
-            f"– {get_font_description(*font_specs)}, {len(glyphs)} glyphs"
-        )
+        results = get_used_font_styles(self.api)
+        fonts = get_fonts(self.api)
+        for font_specs, glyphs in results.items():
+            font_family, is_bold, is_italic = font_specs
+            self.api.log.info(
+                f"– {get_font_description(*font_specs)}, {len(glyphs)} glyphs"
+            )
 
-        result = locate_font(fonts, font_family, is_bold, is_italic)
-        if not result:
-            api.log.warn("  font file not found")
-            continue
+            result = locate_font(fonts, font_family, is_bold, is_italic)
+            if not result:
+                self.api.log.warn("  font file not found")
+                continue
 
-        _weight, _font_path, font = result
-        missing_glyphs = set()
-        for glyph in glyphs:
-            if glyph not in font.glyphs:
-                missing_glyphs.add(glyph)
+            _weight, _font_path, font = result
+            missing_glyphs = set()
+            for glyph in glyphs:
+                if glyph not in font.glyphs:
+                    missing_glyphs.add(glyph)
 
-        if missing_glyphs:
-            api.log.warn(f'  missing glyphs: {"".join(missing_glyphs)}')
+            if missing_glyphs:
+                self.api.log.warn(
+                    f'  missing glyphs: {"".join(missing_glyphs)}'
+                )

@@ -8,28 +8,28 @@ from bubblesub.api.cmd import BaseCommand
 from bubblesub.api.log import LogLevel
 from bubblesub.ass_renderer import AssRenderer
 
-from .check_actors import check_actors
-from .check_ass_tags import check_ass_tags
-from .check_double_words import check_double_words
-from .check_durations import check_durations
-from .check_fonts import check_fonts
-from .check_line_continuation import check_line_continuation
-from .check_long_line import check_long_line
-from .check_punctuation import check_punctuation
-from .check_punctuation_stats import check_punctuation_stats
-from .check_quotes import check_quotes
-from .check_spelling import check_spelling
-from .check_style_validity import check_style_validity
-from .check_styles import check_styles
-from .check_unnecessary_breaks import check_unnecessary_breaks
-from .common import BaseResult, get_height, get_optimal_line_heights, get_width
+from .check import (
+    BaseResult,
+    CheckActorStats,
+    CheckAssTags,
+    CheckDoubleWords,
+    CheckDurations,
+    CheckFonts,
+    CheckLineContinuation,
+    CheckLongLines,
+    CheckPunctuation,
+    CheckPunctuationStats,
+    CheckQuotes,
+    CheckSpelling,
+    CheckStyleStats,
+    CheckStyleValidity,
+    CheckUnnecessaryBreaks,
+)
+from .common import get_height, get_width
 
 
-def list_violations(
-    spell_check_lang: T.Optional[str], api: Api
-) -> T.Iterable[BaseResult]:
+def list_violations(api: Api) -> T.Iterable[BaseResult]:
     renderer = AssRenderer()
-    optimal_line_heights = get_optimal_line_heights(api, renderer)
     renderer.set_source(
         style_list=api.subs.styles,
         event_list=api.subs.events,
@@ -37,16 +37,19 @@ def list_violations(
         video_resolution=(get_width(api), get_height(api)),
     )
 
-    for event in api.subs.events:
-        yield from check_style_validity(event, api.subs.styles)
-        yield from check_durations(event)
-        yield from check_punctuation(spell_check_lang, event)
-        yield from check_quotes(event)
-        yield from check_line_continuation(event)
-        yield from check_ass_tags(event)
-        yield from check_double_words(event)
-        yield from check_unnecessary_breaks(event, api, renderer)
-        yield from check_long_line(event, api, renderer, optimal_line_heights)
+    for check_cls in [
+        CheckStyleValidity,
+        CheckAssTags,
+        CheckDurations,
+        CheckPunctuation,
+        CheckQuotes,
+        CheckLineContinuation,
+        CheckDoubleWords,
+        CheckUnnecessaryBreaks,
+        CheckLongLines,
+    ]:
+        check = check_cls(api, renderer)
+        yield from check.get_violations()
 
 
 class QualityCheckCommand(BaseCommand):
@@ -59,14 +62,10 @@ class QualityCheckCommand(BaseCommand):
         parser.add_argument("-n", "--focus-next", action="store_true")
 
     async def run(self):
-        spell_check_lang = (
-            self.api.subs.language or self.api.cfg.opt["gui"]["spell_check"]
-        )
-
         if self.args.focus_prev or self.args.focus_next:
             violations = [
                 result
-                for result in list_violations(spell_check_lang, self.api)
+                for result in list_violations(self.api)
                 if result.log_level in {LogLevel.WARNING, LogLevel.ERROR}
             ]
             if not violations:
@@ -97,18 +96,15 @@ class QualityCheckCommand(BaseCommand):
                     self.api.log.log(result.log_level, repr(result))
             return
 
-        results = sorted(
-            list_violations(spell_check_lang, self.api),
-            key=lambda result: (
-                re.match("^([^(]*).*?$", result.text).group(1),
-                result.event.number,
-            ),
-        )
-        for result in results:
+        for result in list_violations(self.api):
             self.api.log.log(result.log_level, repr(result))
 
-        check_spelling(spell_check_lang, self.api)
-        check_actors(self.api)
-        check_styles(self.api)
-        check_fonts(self.api)
-        check_punctuation_stats(self.api)
+        for check_cls in [
+            CheckSpelling,
+            CheckActorStats,
+            CheckStyleStats,
+            CheckFonts,
+            CheckPunctuationStats,
+        ]:
+            check = check_cls(self.api)
+            check.run()

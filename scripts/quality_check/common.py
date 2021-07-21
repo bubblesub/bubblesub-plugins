@@ -27,40 +27,6 @@ NON_STUTTER_WORDS = {
 WORDS_WITH_PERIOD = {"vs.", "Mrs.", "Mr.", "Jr.", "U.F.O.", "a.k.a."}
 
 
-class BaseResult:
-    def __init__(
-        self, event: T.Union[AssEvent, T.List[AssEvent]], text: str
-    ) -> None:
-        if isinstance(event, list):
-            self.event = event[0]
-            self.additional_events = event[1:]
-        else:
-            self.event = event
-            self.additional_events = []
-        self.text = text
-
-    @property
-    def events(self) -> T.Iterable[AssEvent]:
-        yield self.event
-        yield from self.additional_events
-
-    def __repr__(self) -> str:
-        ids = "+".join([f'#{event.number or "?"}' for event in self.events])
-        return f"{ids}: {self.text}"
-
-
-class DebugInformation(BaseResult):
-    log_level = LogLevel.DEBUG
-
-
-class Information(BaseResult):
-    log_level = LogLevel.INFO
-
-
-class Violation(BaseResult):
-    log_level = LogLevel.WARNING
-
-
 def measure_frame_size(
     api: Api, renderer: AssRenderer, event: AssEvent
 ) -> T.Tuple[int, int]:
