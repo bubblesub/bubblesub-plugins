@@ -8,6 +8,12 @@ from ..common import is_event_karaoke
 from .base import BaseEventCheck, BaseResult, Violation
 
 
+def format_delta(delta: int) -> str:
+    if delta >= 0:
+        return f"+{delta}"
+    return f"{delta}"
+
+
 class CheckTimes(BaseEventCheck):
     """This check verifies if the subtitles snap to scene boundaries up to
     `MAX_DISTANCE` frames. A scene boundary is understood to be when the camera
@@ -25,10 +31,18 @@ class CheckTimes(BaseEventCheck):
         if event.is_comment or is_event_karaoke(event):
             return
 
-        if not await self.video_frame_snaps(event.start):
-            yield Violation(event, "start does not snap to scene boundary")
-        if not await self.video_frame_snaps(event.end):
-            yield Violation(event, "end does not snap to scene boundary")
+        delta = await self.get_best_pivot(event.start)
+        if delta:
+            yield Violation(
+                event,
+                f"start does not snap to scene boundary ({format_delta(delta)}f)",
+            )
+        delta = await self.get_best_pivot(event.end)
+        if delta:
+            yield Violation(
+                event,
+                f"end does not snap to scene boundary ({format_delta(delta)}f)",
+            )
 
     async def get_video_frame_avg(self, frame_idx: int) -> T.Optional[float]:
         cache_key = (self.api.video.current_stream.path, frame_idx)
@@ -41,7 +55,7 @@ class CheckTimes(BaseEventCheck):
             )
         return self.FRAME_CACHE[cache_key]
 
-    async def video_frame_snaps(self, pts: int) -> bool:
+    async def get_best_pivot(self, pts: int) -> T.Optional[int]:
         cache_key = (self.api.video.current_stream.path, pts)
         if cache_key not in self.SNAP_CACHE:
             frame_idx = self.api.video.current_stream.frame_idx_from_pts(pts)
@@ -69,5 +83,5 @@ class CheckTimes(BaseEventCheck):
             else:
                 best_pivot, best_diff = None, None
 
-            self.SNAP_CACHE[cache_key] = best_pivot is None or best_pivot == 0
+            self.SNAP_CACHE[cache_key] = best_pivot
         return self.SNAP_CACHE[cache_key]
