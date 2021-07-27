@@ -28,7 +28,7 @@ def check_times(api: Mock) -> CheckTimes:
         pytest.param(
             (0, 5, 100, 93, 94), False, id="biggest change on scene boundary"
         ),
-        pytest.param((0, 5, 6, 7, 6), True, id="biggest change 1 frame early"),
+        pytest.param((0, 25, 26, 27, 26), True, id="biggest change 1 frame early"),
     ],
 )
 async def test_check_times(

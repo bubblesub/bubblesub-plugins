@@ -23,7 +23,7 @@ class CheckTimes(BaseEventCheck):
     WIDTH = 4
     HEIGHT = 3
     MAX_DISTANCE = 2
-    MIN_RGB_DELTA = 3
+    MIN_RGB_DELTA = 25
     FRAME_CACHE: T.Dict[T.Tuple[str, int], float] = {}
     SNAP_CACHE: T.Dict[T.Tuple[str, int], bool] = {}
 
