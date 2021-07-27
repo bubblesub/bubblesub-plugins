@@ -30,14 +30,15 @@ class CheckTimes(BaseEventCheck):
         if not await self.video_frame_snaps(event.end):
             yield Violation(event, "end does not snap to scene boundary")
 
-    async def get_video_frame_avg(self, frame_idx: int) -> float:
+    async def get_video_frame_avg(self, frame_idx: int) -> T.Optional[float]:
         cache_key = (self.api.video.current_stream.path, frame_idx)
         if cache_key not in self.FRAME_CACHE:
+            ret = await self.api.video.current_stream.async_get_frame(
+                frame_idx, self.WIDTH, self.HEIGHT
+            )
             self.FRAME_CACHE[cache_key] = (
-                await self.api.video.current_stream.async_get_frame(
-                    frame_idx, self.WIDTH, self.HEIGHT
-                )
-            ).astype(np.int16)
+                ret.astype(np.int16) if ret is not None else None
+            )
         return self.FRAME_CACHE[cache_key]
 
     async def video_frame_snaps(self, pts: int) -> bool:
@@ -55,9 +56,10 @@ class CheckTimes(BaseEventCheck):
             pivots: T.List[T.Tuple[int, float]] = []
             for delta in range(-self.MAX_DISTANCE + 1, self.MAX_DISTANCE + 1):
                 current = frame_data[delta]
-                diff = np.mean(np.abs(current - prev))
-                if diff > self.MIN_RGB_DELTA:
-                    pivots.append((delta, diff))
+                if current is not None and prev is not None:
+                    diff = np.mean(np.abs(current - prev))
+                    if diff >= self.MIN_RGB_DELTA:
+                        pivots.append((delta, diff))
                 prev = current
 
             if pivots:
