@@ -62,15 +62,14 @@ def measure_frame_size(
     return (int((max_x - min_x) * aspect_ratio), max_y - min_y)
 
 
-def get_optimal_line_heights(
-    api: Api, renderer: AssRenderer
-) -> T.Dict[str, float]:
+def get_optimal_line_heights(api: Api) -> T.Dict[str, float]:
     TEST_LINE_COUNT = 20
     VIDEO_RES_X = 100
     VIDEO_RES_Y = TEST_LINE_COUNT * 300
 
     fake_meta = AssMeta()
     fake_meta.set("WrapStyle", 2)
+    renderer = AssRenderer()
     renderer.set_source(
         style_list=api.subs.styles,
         event_list=api.subs.events,
