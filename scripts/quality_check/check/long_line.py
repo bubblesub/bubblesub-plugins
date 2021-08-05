@@ -7,6 +7,7 @@ from bubblesub.fmt.ass.event import AssEvent
 from ..common import (
     WIDTH_MULTIPLIERS,
     get_optimal_line_heights,
+    get_video_aspect_ratio,
     get_video_width,
     is_event_karaoke,
     measure_frame_size,
@@ -18,8 +19,16 @@ class CheckLongLines(BaseEventCheck):
     def __init__(self, api: Api, renderer: AssRenderer) -> None:
         super().__init__(api, renderer)
         self.optimal_line_heights = get_optimal_line_heights(api)
+        self.width_multipliers: T.Dict[int, float] = {}
+        aspect_ratio = get_video_aspect_ratio(api)
+        if aspect_ratio:
+            self.width_multipliers = WIDTH_MULTIPLIERS[aspect_ratio]
 
     async def run_for_event(self, event: AssEvent) -> T.Iterable[BaseResult]:
+        if not self.width_multipliers:
+            # AR information unavailable, covered by a separate check
+            return
+
         if is_event_karaoke(event):
             return
 
@@ -30,7 +39,7 @@ class CheckLongLines(BaseEventCheck):
             return
 
         try:
-            width_multiplier = WIDTH_MULTIPLIERS[line_count]
+            width_multiplier = self.width_multipliers[line_count]
         except LookupError:
             yield Violation(
                 event,

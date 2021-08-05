@@ -6,11 +6,14 @@ import pytest
 from bubblesub.fmt.ass.event import AssEvent
 
 from quality_check.check.unnecessary_breaks import CheckUnnecessaryBreaks
+from quality_check.common import AspectRatio
 
 
 @pytest.fixture
 def check_unnecessary_breaks(api: Mock) -> CheckUnnecessaryBreaks:
-    return CheckUnnecessaryBreaks(api=api, renderer=Mock())
+    check = CheckUnnecessaryBreaks(api=api, renderer=Mock())
+    check.optimal_width = 896
+    return check
 
 
 @pytest.mark.asyncio

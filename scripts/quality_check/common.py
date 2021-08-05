@@ -15,7 +15,10 @@ class AspectRatio(enum.Enum):
     AR_16_9 = enum.auto()
 
 
-WIDTH_MULTIPLIERS = {1: 0.7, 2: 0.9}
+WIDTH_MULTIPLIERS = {
+    AspectRatio.AR_4_3: {1: 0.825, 2: 0.9},
+    AspectRatio.AR_16_9: {1: 0.7, 2: 0.9},
+}
 
 NON_STUTTER_PREFIXES = {"half", "well"}
 NON_STUTTER_SUFFIXES = {"kun", "san", "chan", "smaa", "senpai", "sensei"}
