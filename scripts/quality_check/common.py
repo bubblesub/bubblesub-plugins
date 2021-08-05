@@ -93,11 +93,11 @@ def get_optimal_line_heights(api: Api) -> T.Dict[str, float]:
     return ret
 
 
-def get_height(api: Api) -> int:
+def get_video_height(api: Api) -> int:
     return int(api.subs.meta.get("PlayResY", "0"))
 
 
-def get_width(api: Api) -> int:
+def get_video_width(api: Api) -> int:
     return int(api.subs.meta.get("PlayResX", "0"))
 
 

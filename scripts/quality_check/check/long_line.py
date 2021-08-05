@@ -7,7 +7,7 @@ from bubblesub.fmt.ass.event import AssEvent
 from ..common import (
     WIDTH_MULTIPLIERS,
     get_optimal_line_heights,
-    get_width,
+    get_video_width,
     is_event_karaoke,
     measure_frame_size,
 )
@@ -37,7 +37,7 @@ class CheckLongLines(BaseEventCheck):
                 f"too many lines ({height}/{average_height} = {line_count})",
             )
         else:
-            optimal_width = get_width(self.api) * width_multiplier
+            optimal_width = get_video_width(self.api) * width_multiplier
             if width > optimal_width:
                 yield Violation(
                     event,

@@ -26,7 +26,7 @@ from .check import (
     CheckUnnecessaryBreaks,
 )
 from .check.fonts import get_fonts
-from .common import benchmark, get_height, get_width
+from .common import benchmark, get_video_height, get_video_width
 
 
 async def list_violations(api: Api) -> T.Iterable[BaseResult]:
@@ -35,7 +35,7 @@ async def list_violations(api: Api) -> T.Iterable[BaseResult]:
         style_list=api.subs.styles,
         event_list=api.subs.events,
         meta=api.subs.meta,
-        video_resolution=(get_width(api), get_height(api)),
+        video_resolution=(get_video_width(api), get_video_height(api)),
     )
 
     for check_cls in [

@@ -6,7 +6,7 @@ from bubblesub.fmt.ass.event import AssEvent
 
 from ..common import (
     WIDTH_MULTIPLIERS,
-    get_width,
+    get_video_width,
     is_event_karaoke,
     is_event_title,
     measure_frame_size,
@@ -24,7 +24,7 @@ class CheckUnnecessaryBreaks(BaseEventCheck):
         width, _height = measure_frame_size(
             self.api, self.renderer, event_copy
         )
-        optimal_width = get_width(self.api) * WIDTH_MULTIPLIERS[1]
+        optimal_width = get_video_width(self.api) * WIDTH_MULTIPLIERS[1]
 
         many_sentences = (
             len(re.split(r"[\.!?…—] ", event_copy.text)) > 1
