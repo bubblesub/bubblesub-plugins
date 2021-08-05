@@ -1,3 +1,4 @@
+import enum
 import typing as T
 from contextlib import contextmanager
 from copy import copy
@@ -7,6 +8,12 @@ from bubblesub.api import Api
 from bubblesub.ass_renderer import AssRenderer
 from bubblesub.fmt.ass.event import AssEvent, AssEventList
 from bubblesub.fmt.ass.meta import AssMeta
+
+
+class AspectRatio(enum.Enum):
+    AR_4_3 = enum.auto()
+    AR_16_9 = enum.auto()
+
 
 WIDTH_MULTIPLIERS = {1: 0.7, 2: 0.9}
 
@@ -132,6 +139,23 @@ def is_event_dialog(event: AssEvent) -> bool:
         or is_event_karaoke(event)
         or is_event_credits(event)
     )
+
+
+def get_video_aspect_ratio(api: Api) -> T.Optional[AspectRatio]:
+    width = get_video_width(api)
+    height = get_video_height(api)
+    if not width or not height:
+        return None
+
+    epsilon = 0.03
+    mapping = {
+        4 / 3: AspectRatio.AR_4_3,
+        16 / 9: AspectRatio.AR_16_9,
+    }
+    for value, enum_value in mapping.items():
+        if abs(width / height - value) < epsilon:
+            return enum_value
+    return None
 
 
 @contextmanager

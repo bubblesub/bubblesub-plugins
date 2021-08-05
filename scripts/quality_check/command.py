@@ -24,6 +24,7 @@ from .check import (
     CheckStyleValidity,
     CheckTimes,
     CheckUnnecessaryBreaks,
+    CheckVideoResolution,
 )
 from .check.fonts import get_fonts
 from .common import benchmark, get_video_height, get_video_width
@@ -113,6 +114,7 @@ class QualityCheckCommand(BaseCommand):
             self.api.log.log(result.log_level, repr(result))
 
         for check_cls in [
+            CheckVideoResolution,
             CheckSpelling,
             CheckActorStats,
             CheckStyleStats,
