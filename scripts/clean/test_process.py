@@ -1,6 +1,5 @@
 import pytest
-
-from bubblesub.fmt.ass.event import AssEvent
+from ass_parser import AssEvent
 
 from .process import (
     ProcessingError,

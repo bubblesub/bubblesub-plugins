@@ -1,10 +1,10 @@
 import re
 
+from ass_parser import AssEvent
 from PyQt5 import QtWidgets
 
 from bubblesub.api.cmd import BaseCommand, CommandUnavailable
 from bubblesub.cfg.menu import MenuCommand
-from bubblesub.fmt.ass.event import AssEvent
 from bubblesub.ui.util import load_dialog
 
 try:
@@ -35,7 +35,7 @@ class LoadClosedCaptionsCommand(BaseCommand):
                         start=line.start,
                         end=line.end,
                         note=line.text,
-                        style=self.api.subs.default_style_name,
+                        style_name=self.api.subs.default_style_name,
                     )
                 )
 

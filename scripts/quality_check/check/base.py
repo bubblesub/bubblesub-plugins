@@ -1,10 +1,11 @@
 import typing as T
 
+from ass_parser import AssEvent
+
 from bubblesub.api import Api
 from bubblesub.api.log import LogLevel
 from bubblesub.ass_renderer import AssRenderer
-from bubblesub.fmt.ass.event import AssEvent
-from bubblesub.fmt.ass.util import ass_to_plaintext
+from bubblesub.ass_util import ass_to_plaintext
 
 
 class BaseCheck:

@@ -1,4 +1,4 @@
-from bubblesub.fmt.ass.event import AssEvent, AssEventList
+from ass_parser import AssEvent, AssEventList
 
 from quality_check.check import Violation
 

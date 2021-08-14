@@ -1,9 +1,9 @@
 import typing as T
 
 import regex
+from ass_parser import AssEvent
 
-from bubblesub.fmt.ass.event import AssEvent
-from bubblesub.fmt.ass.util import ass_to_plaintext
+from bubblesub.ass_util import ass_to_plaintext
 
 from ..common import WORDS_WITH_PERIOD, is_event_dialog
 from .base import BaseEventCheck, BaseResult, Violation

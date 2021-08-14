@@ -3,9 +3,9 @@ import typing as T
 from unittest.mock import Mock
 
 import pytest
+from ass_parser import AssEvent
 
 from bubblesub.api.log import LogLevel
-from bubblesub.fmt.ass.event import AssEvent
 
 from quality_check.check.quotes import CheckQuotes
 

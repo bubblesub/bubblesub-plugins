@@ -57,12 +57,13 @@ def get_used_font_styles(
         if event.is_comment:
             continue
 
-        if event.style not in styles:
+        style = styles.get(event.style_name)
+        if not style:
             continue
 
-        family = styles[event.style].font_name
-        is_bold = styles[event.style].bold
-        is_italic = styles[event.style].italic
+        family = style.font_name
+        is_bold = style.bold
+        is_italic = style.italic
 
         try:
             ass_line = ass_tag_parser.parse_ass(event.text)

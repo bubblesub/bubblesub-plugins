@@ -2,13 +2,13 @@ import argparse
 import enum
 import typing as T
 
+from ass_parser import AssEvent
 from PyQt5 import QtCore, QtGui, QtWidgets
 
 from bubblesub.api import Api
 from bubblesub.api.cmd import BaseCommand, CommandUnavailable
 from bubblesub.cfg.menu import MenuCommand
 from bubblesub.cmd.common import SubtitlesSelection
-from bubblesub.fmt.ass.event import AssEvent
 from bubblesub.ui.util import Dialog, async_dialog_exec
 from bubblesub.util import ms_to_str
 

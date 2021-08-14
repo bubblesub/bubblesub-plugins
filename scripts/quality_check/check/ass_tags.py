@@ -1,5 +1,6 @@
 import typing as T
 
+from ass_parser import AssEvent
 from ass_tag_parser import (
     AssTagAlignment,
     AssTagComment,
@@ -9,8 +10,6 @@ from ass_tag_parser import (
     ParseError,
     parse_ass,
 )
-
-from bubblesub.fmt.ass.event import AssEvent
 
 from .base import BaseEventCheck, BaseResult, Violation
 

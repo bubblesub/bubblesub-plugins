@@ -3,7 +3,7 @@ from unittest.mock import Mock, patch
 
 import pytest
 
-from bubblesub.fmt.ass.event import AssEvent
+from ass_parser import AssEvent
 
 from quality_check.check.unnecessary_breaks import CheckUnnecessaryBreaks
 from quality_check.common import AspectRatio

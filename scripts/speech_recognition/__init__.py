@@ -5,11 +5,12 @@ import io
 import time
 import typing as T
 
+from ass_parser import AssEvent
+
 from bubblesub.api import Api
 from bubblesub.api.cmd import BaseCommand, CommandUnavailable
 from bubblesub.cfg.menu import MenuCommand, SubMenu
 from bubblesub.cmd.common import SubtitlesSelection
-from bubblesub.fmt.ass.event import AssEvent
 
 try:
     import speech_recognition as sr

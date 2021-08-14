@@ -4,10 +4,10 @@ from contextlib import contextmanager
 from copy import copy
 from datetime import datetime
 
+from ass_parser import AssEvent, AssEventList, AssScriptInfo
+
 from bubblesub.api import Api
 from bubblesub.ass_renderer import AssRenderer
-from bubblesub.fmt.ass.event import AssEvent, AssEventList
-from bubblesub.fmt.ass.meta import AssMeta
 
 
 class AspectRatio(enum.Enum):
@@ -40,7 +40,9 @@ WORDS_WITH_PERIOD = {"vs.", "Mrs.", "Mr.", "Jr.", "U.F.O.", "a.k.a."}
 def measure_frame_size(
     api: Api, renderer: AssRenderer, event: AssEvent
 ) -> T.Tuple[int, int]:
-    if not any(style.name == event.style for style in renderer.style_list):
+    if not any(
+        style.name == event.style_name for style in renderer.style_list
+    ):
         return (0, 0)
 
     fake_event_list = AssEventList()
@@ -49,7 +51,7 @@ def measure_frame_size(
     renderer.set_source(
         style_list=renderer.style_list,
         event_list=fake_event_list,
-        meta=renderer.meta,
+        script_info=renderer.script_info,
         video_resolution=renderer.video_resolution,
     )
 
@@ -77,13 +79,13 @@ def get_optimal_line_heights(api: Api) -> T.Dict[str, float]:
     VIDEO_RES_X = 100
     VIDEO_RES_Y = TEST_LINE_COUNT * 300
 
-    fake_meta = AssMeta()
-    fake_meta.set("WrapStyle", 2)
+    fake_script_info = AssScriptInfo()
+    fake_script_info["WrapStyle"] = "2"
     renderer = AssRenderer()
     renderer.set_source(
         style_list=api.subs.styles,
         event_list=api.subs.events,
-        meta=fake_meta,
+        script_info=fake_script_info,
         video_resolution=(VIDEO_RES_X, VIDEO_RES_Y),
     )
 
@@ -93,22 +95,22 @@ def get_optimal_line_heights(api: Api) -> T.Dict[str, float]:
             start=0,
             end=1000,
             text="\\N".join(["gjMW"] * TEST_LINE_COUNT),
-            style=style.name,
+            style_name=style.name,
         )
 
         _frame_width, frame_height = measure_frame_size(api, renderer, event)
         line_height = frame_height / TEST_LINE_COUNT
-        ret[event.style] = line_height
-        api.log.debug(f"average height for {event.style}: {line_height}")
+        ret[event.style_name] = line_height
+        api.log.debug(f"average height for {event.style_name}: {line_height}")
     return ret
 
 
 def get_video_height(api: Api) -> int:
-    return int(api.subs.meta.get("PlayResY", "0"))
+    return int(api.subs.script_info.get("PlayResY", "0"))
 
 
 def get_video_width(api: Api) -> int:
-    return int(api.subs.meta.get("PlayResX", "0"))
+    return int(api.subs.script_info.get("PlayResX", "0"))
 
 
 def strip_brackets(text: str) -> str:

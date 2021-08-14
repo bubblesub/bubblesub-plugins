@@ -1,16 +1,17 @@
 import argparse
 import bisect
 
+from ass_parser import AssEvent
+
 from bubblesub.api import Api
 from bubblesub.api.cmd import BaseCommand, CommandUnavailable
 from bubblesub.cfg.menu import MenuCommand
 from bubblesub.cmd.common import Pts
-from bubblesub.fmt.ass.event import AssEvent
 from bubblesub.util import ms_to_str
 
 try:
-    import numpy as np
     import cv2
+    import numpy as np
 except ImportError as ex:
     raise CommandUnavailable(f"{ex.name} is not installed")
 
@@ -115,7 +116,7 @@ class DetectKaraokeCommand(BaseCommand):
                 start=start,
                 end=end,
                 note="detected karaoke",
-                style=self.api.subs.default_style_name,
+                style_name=self.api.subs.default_style_name,
             ),
         )
 

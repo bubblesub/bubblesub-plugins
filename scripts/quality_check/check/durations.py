@@ -1,7 +1,8 @@
 import typing as T
 
-from bubblesub.fmt.ass.event import AssEvent
-from bubblesub.fmt.ass.util import ass_to_plaintext, character_count
+from ass_parser import AssEvent
+
+from bubblesub.ass_util import ass_to_plaintext, character_count
 
 from ..common import is_event_karaoke
 from .base import BaseEventCheck, BaseResult, Violation

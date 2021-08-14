@@ -3,8 +3,7 @@ import typing as T
 from unittest.mock import Mock
 
 import pytest
-
-from bubblesub.fmt.ass.event import AssEvent
+from ass_parser import AssEvent
 
 from quality_check.check.ass_tags import CheckAssTags
 

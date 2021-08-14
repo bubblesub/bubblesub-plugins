@@ -3,8 +3,7 @@ import typing as T
 from unittest.mock import Mock, patch
 
 import pytest
-
-from bubblesub.fmt.ass.event import AssEvent
+from ass_parser import AssEvent
 
 from quality_check.check.times import CheckTimes
 
@@ -28,7 +27,9 @@ def check_times(api: Mock) -> CheckTimes:
         pytest.param(
             (0, 5, 100, 93, 94), False, id="biggest change on scene boundary"
         ),
-        pytest.param((0, 25, 26, 27, 26), True, id="biggest change 1 frame early"),
+        pytest.param(
+            (0, 25, 26, 27, 26), True, id="biggest change 1 frame early"
+        ),
     ],
 )
 async def test_check_times(

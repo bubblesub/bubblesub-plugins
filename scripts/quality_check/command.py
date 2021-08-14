@@ -35,7 +35,7 @@ async def list_violations(api: Api) -> T.Iterable[BaseResult]:
     renderer.set_source(
         style_list=api.subs.styles,
         event_list=api.subs.events,
-        meta=api.subs.meta,
+        script_info=api.subs.script_info,
         video_resolution=(get_video_width(api), get_video_height(api)),
     )
 

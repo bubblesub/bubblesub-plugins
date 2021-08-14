@@ -1,8 +1,7 @@
 import typing as T
 
 import numpy as np
-
-from bubblesub.fmt.ass.event import AssEvent
+from ass_parser import AssEvent
 
 from ..common import is_event_karaoke
 from .base import BaseEventCheck, BaseResult, Violation

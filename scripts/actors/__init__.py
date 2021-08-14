@@ -54,7 +54,7 @@ class ActorsTagger:
             pass
         else:
             if macro_type == MacroType.style:
-                text = sub.style
+                text = sub.style_name
             elif macro_type == MacroType.text:
                 text = sub.text
             elif macro_type == MacroType.actor:
@@ -71,7 +71,7 @@ class ActorsTagger:
             return
         for sub in self._api.subs.selected_events:
             if macro.macro_type == MacroType.style:
-                sub.style = macro.text
+                sub.style_name = macro.text
             elif macro.macro_type == MacroType.text:
                 sub.text = macro.text
             elif macro.macro_type == MacroType.actor:

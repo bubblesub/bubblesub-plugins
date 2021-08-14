@@ -1,8 +1,9 @@
 import typing as T
 
+from ass_parser import AssEvent
+
 from bubblesub.api import Api
 from bubblesub.ass_renderer import AssRenderer
-from bubblesub.fmt.ass.event import AssEvent
 
 from ..common import (
     WIDTH_MULTIPLIERS,
@@ -33,7 +34,7 @@ class CheckLongLines(BaseEventCheck):
             return
 
         width, height = measure_frame_size(self.api, self.renderer, event)
-        average_height = self.optimal_line_heights.get(event.style, 0)
+        average_height = self.optimal_line_heights.get(event.style_name, 0)
         line_count = round(height / average_height) if average_height else 0
         if not line_count:
             return

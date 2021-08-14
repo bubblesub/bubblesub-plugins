@@ -2,9 +2,7 @@ import re
 import typing as T
 
 import ass_tag_parser
-
-from bubblesub.fmt.ass.event import AssEvent
-from bubblesub.fmt.ass.style import AssStyle
+from ass_parser import AssEvent, AssStyle
 
 
 class ProcessingError(Exception):

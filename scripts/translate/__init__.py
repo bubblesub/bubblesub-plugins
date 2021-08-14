@@ -6,12 +6,12 @@ from subprocess import PIPE, run
 
 import ass_tag_parser
 import requests
+from ass_parser import AssEvent
 
 from bubblesub.api import Api
 from bubblesub.api.cmd import BaseCommand
 from bubblesub.cfg.menu import MenuCommand, SubMenu
 from bubblesub.cmd.common import SubtitlesSelection
-from bubblesub.fmt.ass.event import AssEvent
 
 MAX_CHUNKS = 50
 

@@ -2,7 +2,7 @@ import re
 import typing as T
 from collections import defaultdict
 
-from bubblesub.fmt.ass.util import ass_to_plaintext, spell_check_ass_line
+from bubblesub.ass_util import ass_to_plaintext, spell_check_ass_line
 from bubblesub.spell_check import (
     BaseSpellChecker,
     SpellCheckerError,

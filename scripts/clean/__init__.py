@@ -48,7 +48,7 @@ class CleanCommand(BaseCommand):
             subtitles = await self.args.target.get_subtitles()
 
             for sub in subtitles:
-                style = self.api.subs.styles.get_by_name(sub.style)
+                style = self.api.subs.styles.get_by_name(sub.style_name)
                 text = fix_text(sub.text, style)
                 if text != sub.text:
                     sub.text = text

@@ -1,6 +1,6 @@
 from collections import defaultdict
 
-from bubblesub.fmt.ass.util import ass_to_plaintext
+from bubblesub.ass_util import ass_to_plaintext
 
 from ..common import is_event_karaoke, is_event_title
 from .base import BaseCheck

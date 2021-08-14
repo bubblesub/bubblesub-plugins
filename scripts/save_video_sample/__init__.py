@@ -4,11 +4,12 @@ import subprocess
 import tempfile
 from pathlib import Path
 
+from ass_parser import write_ass
+
 from bubblesub.api import Api
 from bubblesub.api.cmd import BaseCommand, CommandUnavailable
 from bubblesub.cfg.menu import MenuCommand
 from bubblesub.cmd.common import FancyPath, Pts
-from bubblesub.fmt.ass.writer import write_ass
 from bubblesub.util import ms_to_str
 
 

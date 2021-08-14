@@ -9,7 +9,7 @@ class CheckStyleStats(BaseCheck):
         styles = defaultdict(int)
 
         for event in self.api.subs.events:
-            styles[event.style] += 1
+            styles[event.style_name] += 1
 
         for style, occurrences in sorted(
             styles.items(), key=lambda kv: -kv[1]
