@@ -39,7 +39,7 @@ class SpeechRecognitionCommand(BaseCommand):
     def is_enabled(self) -> bool:
         return (
             self.args.target.makes_sense
-            and self.api.audio.current_stream
+            and self.api.audio.has_current_stream
             and self.api.audio.current_stream.is_ready
         )
 

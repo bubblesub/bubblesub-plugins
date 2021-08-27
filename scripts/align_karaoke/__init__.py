@@ -145,7 +145,7 @@ class AlignKaraokeCommand(BaseCommand):
     @property
     def is_enabled(self) -> bool:
         return (
-            self.api.video.current_stream
+            self.api.video.has_current_stream
             and self.api.video.current_stream.is_ready
             and self.api.playback.is_ready
             and self.api.subs.has_selection

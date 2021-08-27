@@ -13,7 +13,7 @@ class AlignSubtitlesToVideoFramesCommand(BaseCommand):
     @property
     def is_enabled(self):
         return (
-            self.api.video.current_stream
+            self.api.video.has_current_stream
             and self.api.video.current_stream.is_ready
             and self.api.playback.is_ready
             and self.args.target.makes_sense
