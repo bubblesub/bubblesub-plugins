@@ -36,22 +36,23 @@ class CheckUnnecessaryBreaks(BaseEventCheck):
         if r"\N" not in event.text:
             return
 
+        if is_event_title(event) or is_event_karaoke(event):
+            return
+
         event_copy = copy(event)
         event_copy.text = event.text.replace(r"\N", " ")
-        width, _height = measure_frame_size(
-            self.api, self.renderer, event_copy
-        )
-
         many_sentences = (
             len(re.split(r"[\.!?…—] ", event_copy.text)) > 1
             or event_copy.text.count("–") >= 2
         )
-        if (
-            width < self.optimal_width
-            and not many_sentences
-            and not is_event_title(event)
-            and not is_event_karaoke(event)
-        ):
+        if many_sentences:
+            return
+
+        width, _height = measure_frame_size(
+            self.api, self.renderer, event_copy
+        )
+
+        if width < self.optimal_width:
             yield Information(
                 event,
                 f"possibly unnecessary break "

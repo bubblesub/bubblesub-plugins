@@ -4,7 +4,7 @@ from contextlib import contextmanager
 from copy import copy
 from datetime import datetime
 
-from ass_parser import AssEvent, AssEventList, AssScriptInfo
+from ass_parser import AssEvent, AssFile, AssScriptInfo
 
 from bubblesub.api import Api
 from bubblesub.ass_renderer import AssRenderer
@@ -41,17 +41,17 @@ def measure_frame_size(
     api: Api, renderer: AssRenderer, event: AssEvent
 ) -> T.Tuple[int, int]:
     if not any(
-        style.name == event.style_name for style in renderer.style_list
+        style.name == event.style_name for style in renderer.ass_file.styles
     ):
         return (0, 0)
 
-    fake_event_list = AssEventList()
-    fake_event_list.append(copy(event))
+    fake_file = AssFile()
+    fake_file.styles[:] = [copy(style) for style in renderer.ass_file.styles]
+    fake_file.events[:] = [copy(event)]
+    fake_file.script_info.update(renderer.ass_file.script_info)
 
     renderer.set_source(
-        style_list=renderer.style_list,
-        event_list=fake_event_list,
-        script_info=renderer.script_info,
+        ass_file=fake_file,
         video_resolution=renderer.video_resolution,
     )
 
@@ -79,13 +79,13 @@ def get_optimal_line_heights(api: Api) -> T.Dict[str, float]:
     VIDEO_RES_X = 100
     VIDEO_RES_Y = TEST_LINE_COUNT * 300
 
-    fake_script_info = AssScriptInfo()
-    fake_script_info["WrapStyle"] = "2"
+    fake_file = AssFile()
+    fake_file.styles[:] = [copy(style) for style in api.subs.ass_file.styles]
+    fake_file.script_info.update(api.subs.ass_file.script_info)
+    fake_file.script_info["WrapStyle"] = "2"
     renderer = AssRenderer()
     renderer.set_source(
-        style_list=api.subs.styles,
-        event_list=api.subs.events,
-        script_info=fake_script_info,
+        ass_file=fake_file,
         video_resolution=(VIDEO_RES_X, VIDEO_RES_Y),
     )
 
