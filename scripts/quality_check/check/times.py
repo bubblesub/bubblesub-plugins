@@ -44,7 +44,7 @@ class CheckTimes(BaseEventCheck):
             )
 
     async def get_video_frame_avg(self, frame_idx: int) -> T.Optional[float]:
-        cache_key = (self.api.video.current_stream.path, frame_idx)
+        cache_key = (self.api.video.current_stream.path.absolute(), frame_idx)
         if cache_key not in self.FRAME_CACHE:
             ret = await self.api.video.current_stream.async_get_frame(
                 frame_idx, self.WIDTH, self.HEIGHT
