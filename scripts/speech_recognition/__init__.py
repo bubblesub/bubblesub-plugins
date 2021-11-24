@@ -85,7 +85,7 @@ class SpeechRecognitionCommand(BaseCommand):
                 }
 
                 completed, non_completed = concurrent.futures.wait(
-                    future_to_sub, timeout=8
+                    future_to_sub, timeout=self.args.timeout
                 )
 
                 with self.api.undo.capture():
@@ -149,6 +149,13 @@ class SpeechRecognitionCommand(BaseCommand):
             help="number of parallel requests",
             type=int,
             default=5,
+        )
+        parser.add_argument(
+            "-T",
+            "--timeout",
+            help="max request timeout",
+            type=int,
+            default=8,
         )
         parser.add_argument(
             "-s",
