@@ -36,7 +36,7 @@ class ProgressCommand(BaseCommand):
         total_duration = 0
         words = []
         for event in self.api.subs.events:
-            if event.actor.startswith("[") and event.actor.endswith("]"):
+            if event.is_comment:
                 continue
             total_duration += event.duration
             total_count += 1
