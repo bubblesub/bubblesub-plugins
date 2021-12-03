@@ -152,13 +152,19 @@ def get_video_aspect_ratio(api: Api) -> T.Optional[AspectRatio]:
     if not width or not height:
         return None
 
-    epsilon = 0.03
+    src_aspect_ratio = width / height
+    max_ar_diff = 0.05  # max difference between AR: 5%
     mapping = {
         4 / 3: AspectRatio.AR_4_3,
         16 / 9: AspectRatio.AR_16_9,
     }
-    for value, enum_value in mapping.items():
-        if abs(width / height - value) < epsilon:
+    for cmp_aspect_ratio, enum_value in mapping.items():
+        ar_diff = (
+            cmp_aspect_ratio / src_aspect_ratio
+            if cmp_aspect_ratio > src_aspect_ratio
+            else src_aspect_ratio / cmp_aspect_ratio
+        ) - 1
+        if ar_diff < max_ar_diff:
             return enum_value
     return None
 
