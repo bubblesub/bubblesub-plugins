@@ -15,6 +15,7 @@ from .check import (
     CheckDoubleWords,
     CheckDurations,
     CheckFonts,
+    CheckGrammar,
     CheckLineContinuation,
     CheckLongLines,
     CheckPunctuation,
@@ -32,6 +33,9 @@ from .common import benchmark, get_video_height, get_video_width
 
 
 def get_event_checks(full: bool) -> Iterable[BaseCheck]:
+    if full:
+        yield CheckGrammar
+
     yield CheckStyleValidity
     yield CheckAssTags
     yield CheckDurations

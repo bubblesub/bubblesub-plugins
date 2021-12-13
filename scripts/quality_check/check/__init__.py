@@ -11,6 +11,7 @@ from .base import (
 from .double_words import CheckDoubleWords
 from .durations import CheckDurations
 from .fonts import CheckFonts
+from .grammar import CheckGrammar
 from .line_continuation import CheckLineContinuation
 from .long_line import CheckLongLines
 from .punctuation import CheckPunctuation
@@ -32,6 +33,7 @@ __all__ = [
     "CheckDoubleWords",
     "CheckDurations",
     "CheckFonts",
+    "CheckGrammar",
     "CheckLineContinuation",
     "CheckLongLines",
     "CheckPunctuation",
