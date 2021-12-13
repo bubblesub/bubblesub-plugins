@@ -49,7 +49,7 @@ class SaveVideoSampleCommand(BaseCommand):
         def create_sample() -> None:
             with tempfile.TemporaryDirectory() as dir_name:
                 subs_path = Path(dir_name) / "tmp.ass"
-                with open(subs_path, "w") as handle:
+                with subs_path.open("w", encoding="utf-8") as handle:
                     write_ass(self.api.subs.ass_file, handle)
 
                 command = [

@@ -13,9 +13,9 @@ from bubblesub.cfg.menu import MenuCommand, SubMenu
 from bubblesub.cmd.common import SubtitlesSelection
 
 try:
-    import speech_recognition as sr
-except ImportError as ex:
-    raise CommandUnavailable(f"{ex.name} is not installed")
+    import speech_recognition as sr  # pylint: disable=import-self
+except ImportError:
+    raise CommandUnavailable("speech_recognition is not installed") from None
 
 LEAD_IN = 100
 LEAD_OUT = 100

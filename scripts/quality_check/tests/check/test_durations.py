@@ -6,8 +6,8 @@ from ass_parser import AssEvent
 from quality_check.check.durations import CheckDurations
 
 
-@pytest.fixture
-def check_durations(api: Mock) -> CheckDurations:
+@pytest.fixture(name="check_durations")
+def fixture_check_durations(api: Mock) -> CheckDurations:
     return CheckDurations(api=api, renderer=Mock())
 
 

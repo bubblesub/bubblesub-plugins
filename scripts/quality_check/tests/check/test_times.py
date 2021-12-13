@@ -8,8 +8,8 @@ from ass_parser import AssEvent
 from quality_check.check.times import CheckTimes
 
 
-@pytest.fixture
-def check_times(api: Mock) -> CheckTimes:
+@pytest.fixture(name="check_times")
+def fixture_check_times(api: Mock) -> CheckTimes:
     return CheckTimes(api=api, renderer=Mock())
 
 

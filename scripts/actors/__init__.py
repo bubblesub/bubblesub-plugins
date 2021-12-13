@@ -13,9 +13,9 @@ SHORTCUTS = [f"F{num}" for num in range(1, 13)]
 
 
 class MacroType(enum.Enum):
-    actor = enum.auto()
-    style = enum.auto()
-    text = enum.auto()
+    ACTOR = enum.auto()
+    STYLE = enum.auto()
+    TEXT = enum.auto()
 
 
 @dataclass
@@ -53,11 +53,11 @@ class ActorsTagger:
         except LookupError:
             pass
         else:
-            if macro_type == MacroType.style:
+            if macro_type == MacroType.STYLE:
                 text = sub.style_name
-            elif macro_type == MacroType.text:
+            elif macro_type == MacroType.TEXT:
                 text = sub.text
-            elif macro_type == MacroType.actor:
+            elif macro_type == MacroType.ACTOR:
                 text = sub.actor
             else:
                 raise NotImplementedError("not implemented")
@@ -70,11 +70,11 @@ class ActorsTagger:
         if not macro:
             return
         for sub in self._api.subs.selected_events:
-            if macro.macro_type == MacroType.style:
+            if macro.macro_type == MacroType.STYLE:
                 sub.style_name = macro.text
-            elif macro.macro_type == MacroType.text:
+            elif macro.macro_type == MacroType.TEXT:
                 sub.text = macro.text
-            elif macro.macro_type == MacroType.actor:
+            elif macro.macro_type == MacroType.ACTOR:
                 sub.actor = macro.text
             else:
                 raise NotImplementedError("not implemented")
@@ -144,11 +144,11 @@ class ActorsCommand(BaseCommand):
         elif self.args.mode == "off":
             tagger.disable()
         elif self.args.store_style:
-            tagger.store_macro(MacroType.style, self.args.store_style)
+            tagger.store_macro(MacroType.STYLE, self.args.store_style)
         elif self.args.store_actor:
-            tagger.store_macro(MacroType.actor, self.args.store_actor)
+            tagger.store_macro(MacroType.ACTOR, self.args.store_actor)
         elif self.args.store_text:
-            tagger.store_macro(MacroType.text, self.args.store_text)
+            tagger.store_macro(MacroType.TEXT, self.args.store_text)
         elif self.args.apply:
             tagger.apply_macro(self.args.apply)
 

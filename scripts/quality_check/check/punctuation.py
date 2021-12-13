@@ -52,7 +52,7 @@ class CheckPunctuation(BaseEventCheck):
 
         context = re.split(r"\W+", re.sub('[.,?!"]', "", text.lower()))
         if lang.startswith("en"):
-            for word in {
+            for word in [
                 "im",
                 "youre",
                 "hes",
@@ -78,7 +78,7 @@ class CheckPunctuation(BaseEventCheck):
                 "wouldve",
                 "youve",
                 "ive",
-            }:
+            ]:
                 if word in context:
                     yield Violation(event, "missing apostrophe")
 

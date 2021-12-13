@@ -17,7 +17,7 @@ try:
     import numpy as np
     import pytesseract
 except ImportError as ex:
-    raise CommandUnavailable(f"{ex.name} is not installed")
+    raise CommandUnavailable(f"{ex.name} is not installed") from None
 
 
 class OcrSettings(QtCore.QObject):
@@ -36,8 +36,8 @@ class OcrSettings(QtCore.QObject):
 
 
 class DragMode(enum.IntEnum):
-    none = enum.auto()
-    end = enum.auto()
+    NONE = enum.auto()
+    END = enum.auto()
 
 
 class _PreviewWidget(QtWidgets.QWidget):
@@ -48,7 +48,7 @@ class _PreviewWidget(QtWidgets.QWidget):
         self.settings = settings
         self.frame = frame
         self.bitmap = np.zeros(frame.shape)
-        self.drag = DragMode.none
+        self.drag = DragMode.NONE
 
         self.settings.changed.connect(self.on_settings_change)
 
@@ -80,18 +80,18 @@ class _PreviewWidget(QtWidgets.QWidget):
 
         self.settings.changed.emit()
 
-        self.drag = DragMode.none
+        self.drag = DragMode.NONE
         self.update()
 
     def mousePressEvent(self, event: QtGui.QMouseEvent) -> None:
         if event.button() == QtCore.Qt.LeftButton:
-            self.drag = DragMode.end
+            self.drag = DragMode.END
             self.settings.x1 = self.settings.x2 = event.pos().x()
             self.settings.y1 = self.settings.y2 = event.pos().y()
         self.update()
 
     def mouseMoveEvent(self, event: QtGui.QMouseEvent) -> None:
-        if self.drag == DragMode.end:
+        if self.drag == DragMode.END:
             self.settings.x2 = event.pos().x()
             self.settings.y2 = event.pos().y()
         self.update()

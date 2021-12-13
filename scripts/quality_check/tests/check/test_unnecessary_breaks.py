@@ -2,15 +2,13 @@ import typing as T
 from unittest.mock import Mock, patch
 
 import pytest
-
 from ass_parser import AssEvent
 
 from quality_check.check.unnecessary_breaks import CheckUnnecessaryBreaks
-from quality_check.common import AspectRatio
 
 
-@pytest.fixture
-def check_unnecessary_breaks(api: Mock) -> CheckUnnecessaryBreaks:
+@pytest.fixture(name="check_unnecessary_breaks")
+def fixture_check_unnecessary_breaks(api: Mock) -> CheckUnnecessaryBreaks:
     check = CheckUnnecessaryBreaks(api=api, renderer=Mock())
     check.optimal_width = 896
     return check

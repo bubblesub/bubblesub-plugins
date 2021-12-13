@@ -76,11 +76,11 @@ class CheckTimes(BaseEventCheck):
                 prev = current
 
             if pivots:
-                best_pivot, best_diff = max(
+                best_pivot, _best_diff = max(
                     sorted(pivots), key=lambda kv: kv[1]
                 )
             else:
-                best_pivot, best_diff = None, None
+                best_pivot, _best_diff = None, None
 
             self.SNAP_CACHE[cache_key] = best_pivot
         return self.SNAP_CACHE[cache_key]

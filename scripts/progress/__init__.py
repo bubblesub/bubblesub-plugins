@@ -4,8 +4,8 @@ import re
 import ass_tag_parser
 
 from bubblesub.api.cmd import BaseCommand
-from bubblesub.cfg.menu import MenuCommand
 from bubblesub.ass_util import ass_to_plaintext
+from bubblesub.cfg.menu import MenuCommand
 
 STRIP = list("…–—♪") + ["\\N"]
 

@@ -8,8 +8,8 @@ from bubblesub.api.log import LogLevel
 from bubblesub.ass_renderer import AssRenderer
 
 from .check import (
-    BaseResult,
     BaseCheck,
+    BaseResult,
     CheckActorStats,
     CheckAssTags,
     CheckDoubleWords,

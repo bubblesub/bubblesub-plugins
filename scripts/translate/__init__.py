@@ -51,18 +51,18 @@ def translate(
             translation["text"]
             for translation in response.json()["translations"]
         ]
-    else:
-        args = ["trans", "-b"]
-        args += ["-e", engine]
-        args += ["-s", source_code]
-        args += ["-t", target_code]
-        args += ["\n".join(lines)]
-        result = run(args, check=True, stdout=PIPE, stderr=PIPE)
-        response = result.stdout.decode().strip()
-        response = response.replace("u200b", "")
-        if not response:
-            raise ValueError("error")
-        return response.split("\n")
+
+    args = ["trans", "-b"]
+    args += ["-e", engine]
+    args += ["-s", source_code]
+    args += ["-t", target_code]
+    args += ["\n".join(lines)]
+    result = run(args, check=True, stdout=PIPE, stderr=PIPE)
+    response = result.stdout.decode().strip()
+    response = response.replace("u200b", "")
+    if not response:
+        raise ValueError("error")
+    return response.split("\n")
 
 
 def preprocess(chunk: str) -> str:

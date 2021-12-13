@@ -8,8 +8,8 @@ from ass_parser import AssEvent
 from quality_check.check.ass_tags import CheckAssTags
 
 
-@pytest.fixture
-def check_ass_tags(api: Mock) -> CheckAssTags:
+@pytest.fixture(name="check_ass_tags")
+def fixture_check_ass_tags(api: Mock) -> CheckAssTags:
     return CheckAssTags(api=api, renderer=Mock())
 
 

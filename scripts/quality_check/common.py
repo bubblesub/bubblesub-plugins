@@ -4,7 +4,7 @@ from contextlib import contextmanager
 from copy import copy
 from datetime import datetime
 
-from ass_parser import AssEvent, AssFile, AssScriptInfo
+from ass_parser import AssEvent, AssFile
 
 from bubblesub.api import Api
 from bubblesub.ass_renderer import AssRenderer
@@ -75,9 +75,9 @@ def measure_frame_size(
 
 
 def get_optimal_line_heights(api: Api) -> T.Dict[str, float]:
-    TEST_LINE_COUNT = 20
-    VIDEO_RES_X = 100
-    VIDEO_RES_Y = TEST_LINE_COUNT * 300
+    test_line_count = 20
+    video_res_x = 100
+    video_res_y = test_line_count * 300
 
     fake_file = AssFile()
     fake_file.styles[:] = [copy(style) for style in api.subs.ass_file.styles]
@@ -86,7 +86,7 @@ def get_optimal_line_heights(api: Api) -> T.Dict[str, float]:
     renderer = AssRenderer()
     renderer.set_source(
         ass_file=fake_file,
-        video_resolution=(VIDEO_RES_X, VIDEO_RES_Y),
+        video_resolution=(video_res_x, video_res_y),
     )
 
     ret = {}
@@ -94,12 +94,12 @@ def get_optimal_line_heights(api: Api) -> T.Dict[str, float]:
         event = AssEvent(
             start=0,
             end=1000,
-            text="\\N".join(["gjMW"] * TEST_LINE_COUNT),
+            text="\\N".join(["gjMW"] * test_line_count),
             style_name=style.name,
         )
 
         _frame_width, frame_height = measure_frame_size(api, renderer, event)
-        line_height = frame_height / TEST_LINE_COUNT
+        line_height = frame_height / test_line_count
         ret[event.style_name] = line_height
         api.log.debug(f"average height for {event.style_name}: {line_height}")
     return ret

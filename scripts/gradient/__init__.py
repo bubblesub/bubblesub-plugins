@@ -1,3 +1,4 @@
+# pylint: disable=invalid-name
 import argparse
 import re
 import typing as T

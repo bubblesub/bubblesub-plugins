@@ -11,9 +11,13 @@ from bubblesub.util import ms_to_str
 
 try:
     import cv2
+except ImportError:
+    raise CommandUnavailable("cv2 is not installed") from None
+
+try:
     import numpy as np
-except ImportError as ex:
-    raise CommandUnavailable(f"{ex.name} is not installed")
+except ImportError:
+    raise CommandUnavailable("numpy is not installed") from None
 
 FRAME_WIDTH = 320
 FRAME_HEIGHT = 240

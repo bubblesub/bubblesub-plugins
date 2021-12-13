@@ -7,8 +7,8 @@ from ass_parser import AssEvent
 from quality_check.check.line_continuation import CheckLineContinuation
 
 
-@pytest.fixture
-def check_line_continuation(api: Mock) -> CheckLineContinuation:
+@pytest.fixture(name="check_line_continuation")
+def fixutre_check_line_continuation(api: Mock) -> CheckLineContinuation:
     return CheckLineContinuation(api=api, renderer=Mock())
 
 

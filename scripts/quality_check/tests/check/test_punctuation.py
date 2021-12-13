@@ -7,8 +7,8 @@ from ass_parser import AssEvent
 from quality_check.check.punctuation import CheckPunctuation
 
 
-@pytest.fixture
-def check_punctuation(api: Mock) -> CheckPunctuation:
+@pytest.fixture(name="check_punctuation")
+def fixture_check_punctuation(api: Mock) -> CheckPunctuation:
     return CheckPunctuation(api=api, renderer=Mock())
 
 

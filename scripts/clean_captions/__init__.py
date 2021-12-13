@@ -9,8 +9,8 @@ from bubblesub.ui.util import load_dialog
 
 try:
     import pysubs2
-except ImportError as ex:
-    raise CommandUnavailable(f"{ex.name} is not installed")
+except ImportError:
+    raise CommandUnavailable("pysubs2 is not installed") from None
 
 
 class LoadClosedCaptionsCommand(BaseCommand):

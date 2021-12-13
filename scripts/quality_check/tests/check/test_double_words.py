@@ -7,8 +7,8 @@ from ass_parser import AssEvent
 from quality_check.check.double_words import CheckDoubleWords
 
 
-@pytest.fixture
-def check_double_words(api: Mock) -> CheckDoubleWords:
+@pytest.fixture(name="check_double_words")
+def fixture_check_double_words(api: Mock) -> CheckDoubleWords:
     return CheckDoubleWords(api=api, renderer=Mock())
 
 

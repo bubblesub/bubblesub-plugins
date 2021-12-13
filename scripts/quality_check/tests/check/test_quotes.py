@@ -10,8 +10,8 @@ from bubblesub.api.log import LogLevel
 from quality_check.check.quotes import CheckQuotes
 
 
-@pytest.fixture
-def check_quotes(api: Mock) -> CheckQuotes:
+@pytest.fixture(name="check_quotes")
+def fixture_check_quotes(api: Mock) -> CheckQuotes:
     return CheckQuotes(api=api, renderer=Mock())
 
 

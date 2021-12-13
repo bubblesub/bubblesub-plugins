@@ -11,15 +11,15 @@ try:
     import cv2
     import numpy as np
 except ImportError as ex:
-    raise CommandUnavailable(f"{ex.name} is not installed")
+    raise CommandUnavailable(f"{ex.name} is not installed") from None
 
 FRAME_CROP = 0.85
 THRESHOLD = 210
 
 
 class DragMode(enum.IntEnum):
-    none = enum.auto()
-    end = enum.auto()
+    NONE = enum.auto()
+    END = enum.auto()
 
 
 def clamp(src: float, low: float, high: float) -> float:
@@ -34,7 +34,7 @@ class _PreviewWidget(QtWidgets.QWidget):
         self.height = frame.shape[0]
         self.start = QtCore.QPoint(0, 0)
         self.end = QtCore.QPoint(0, 0)
-        self.drag = DragMode.none
+        self.drag = DragMode.NONE
 
     def sizeHint(self) -> QtCore.QSize:
         height, width, _channels = self.frame.shape
@@ -43,17 +43,17 @@ class _PreviewWidget(QtWidgets.QWidget):
     def mouseReleaseEvent(self, event: QtGui.QMouseEvent) -> None:
         if event.button() == QtCore.Qt.LeftButton:
             self.end = self.constraint(event.pos())
-        self.drag = DragMode.none
+        self.drag = DragMode.NONE
         self.update()
 
     def mousePressEvent(self, event: QtGui.QMouseEvent) -> None:
         if event.button() == QtCore.Qt.LeftButton:
-            self.drag = DragMode.end
+            self.drag = DragMode.END
             self.start = self.end = self.constraint(event.pos())
         self.update()
 
     def mouseMoveEvent(self, event: QtGui.QMouseEvent) -> None:
-        if self.drag == DragMode.end:
+        if self.drag == DragMode.END:
             self.end = self.constraint(event.pos())
         self.update()
 

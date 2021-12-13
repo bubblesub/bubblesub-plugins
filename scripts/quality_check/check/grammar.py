@@ -7,7 +7,7 @@ from ass_parser import AssEvent
 
 from bubblesub.api import Api
 from bubblesub.ass_renderer import AssRenderer
-from bubblesub.ass_util import ass_to_plaintext, character_count
+from bubblesub.ass_util import ass_to_plaintext
 
 from ..common import is_event_karaoke
 from .base import BaseEventCheck, BaseResult, Violation
@@ -15,7 +15,7 @@ from .base import BaseEventCheck, BaseResult, Violation
 try:
     from gingerit.gingerit import GingerIt
 
-    parser = GingerIt()
+    parser = GingerIt()  # pylint: disable=invalid-name
 except ImportError:
     parser = None
 
