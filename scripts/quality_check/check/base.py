@@ -1,10 +1,10 @@
 import typing as T
 
 from ass_parser import AssEvent
+from ass_renderer import AssRenderer
 
 from bubblesub.api import Api
 from bubblesub.api.log import LogLevel
-from bubblesub.ass_renderer import AssRenderer
 from bubblesub.ass_util import ass_to_plaintext
 
 

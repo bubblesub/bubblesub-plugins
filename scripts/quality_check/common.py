@@ -5,9 +5,9 @@ from copy import copy
 from datetime import datetime
 
 from ass_parser import AssEvent, AssFile
+from ass_renderer import AssRenderer
 
 from bubblesub.api import Api
-from bubblesub.ass_renderer import AssRenderer
 
 
 class AspectRatio(enum.Enum):

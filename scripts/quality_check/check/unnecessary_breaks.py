@@ -3,9 +3,9 @@ import typing as T
 from copy import copy
 
 from ass_parser import AssEvent
+from ass_renderer import AssRenderer
 
 from bubblesub.api import Api
-from bubblesub.ass_renderer import AssRenderer
 
 from ..common import (
     WIDTH_MULTIPLIERS,

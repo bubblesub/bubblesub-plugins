@@ -4,9 +4,9 @@ from functools import cache
 from typing import Any, Optional
 
 from ass_parser import AssEvent
+from ass_renderer import AssRenderer
 
 from bubblesub.api import Api
-from bubblesub.ass_renderer import AssRenderer
 from bubblesub.ass_util import ass_to_plaintext
 
 from ..common import is_event_karaoke

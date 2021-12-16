@@ -2,10 +2,11 @@ import argparse
 import bisect
 from collections.abc import Iterable
 
+from ass_renderer import AssRenderer
+
 from bubblesub.api import Api
 from bubblesub.api.cmd import BaseCommand
 from bubblesub.api.log import LogLevel
-from bubblesub.ass_renderer import AssRenderer
 
 from .check import (
     BaseCheck,
