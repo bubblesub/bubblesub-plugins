@@ -2,9 +2,9 @@ import functools
 import re
 
 import ass_tag_parser
+from ass_tag_parser import ass_to_plaintext
 
 from bubblesub.api.cmd import BaseCommand
-from bubblesub.ass_util import ass_to_plaintext
 from bubblesub.cfg.menu import MenuCommand
 
 STRIP = list("…–—♪") + ["\\N"]

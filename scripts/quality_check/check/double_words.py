@@ -2,8 +2,7 @@ import re
 import typing as T
 
 from ass_parser import AssEvent
-
-from bubblesub.ass_util import ass_to_plaintext
+from ass_tag_parser import ass_to_plaintext
 
 from .base import BaseEventCheck, BaseResult, Violation
 
