@@ -90,7 +90,7 @@ class ActorsTagger:
             return
 
         def set_hotkey(shortcut, cmd_parts: T.List[str]) -> None:
-            self._api.cfg.hotkeys[HotkeyContext.Global, shortcut] = " ".join(
+            self._api.cfg.hotkeys[HotkeyContext.GLOBAL, shortcut] = " ".join(
                 map(shlex.quote, cmd_parts)
             )
 
@@ -111,12 +111,12 @@ class ActorsTagger:
             for modifier in ["", "Alt+", "Ctrl+", "Shift+"]:
                 shortcut = modifier + base
                 self._previous_hotkeys[shortcut] = self._api.cfg.hotkeys[
-                    HotkeyContext.Global, shortcut
+                    HotkeyContext.GLOBAL, shortcut
                 ]
 
     def _restore_hotkeys(self) -> None:
         for shortcut, cmdline in self._previous_hotkeys.items():
-            self._api.cfg.hotkeys[HotkeyContext.Global, shortcut] = cmdline
+            self._api.cfg.hotkeys[HotkeyContext.GLOBAL, shortcut] = cmdline
 
 
 tagger: ActorsTagger = None
